@@ -186,7 +186,7 @@ private:
 
 void __testUdpSyncClient()
 {
-	printf("\n__TestTcpSyncClient ---------------------------------------------------------\n");
+	printf("\n__TestUdpSyncClient ---------------------------------------------------------\n");
 	__initLog(ELogLevel_info);
 	__TestUdpSyncClientRun* r = new __TestUdpSyncClientRun();
 	Thread* t = new Thread(r);

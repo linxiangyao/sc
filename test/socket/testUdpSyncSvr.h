@@ -34,7 +34,6 @@ private:
 		m_sapi->tcp_close(m_tran_sid);
 	}
 
-
 	void __run()
 	{
 		if (!m_sapi->tcp_open(&m_listen_sid))
@@ -104,8 +103,6 @@ private:
 			, StringUtil::byteCountToDisplayString(recv_total_len).c_str(), total_time_span_ms, StringUtil::byteCountToDisplayString(byte_per_second).c_str());
 	}
 
-
-
 	void __onRecvPack(uint64_t recv_total_len)
 	{
 		const size_t block_size = 1 * 1024 * 1024;
@@ -117,6 +114,8 @@ private:
 			fflush(stdout);
 		}
 	}
+
+
 
 	bool m_is_exit;
 	TcpSyncApi* m_sapi;
@@ -131,7 +130,7 @@ private:
 
 void __testUdpSyncSvr()
 {
-	printf("\n__testTcpSyncSvr ---------------------------------------------------------\n");
+	printf("\n__testUdpSyncSvr ---------------------------------------------------------\n");
 	__initLog(ELogLevel_info);
 	__TestUdpSyncSvrRun* r = new __TestUdpSyncSvrRun();
 	Thread* t = new Thread(r);
