@@ -1,0 +1,188 @@
+#include "udpAsyncApi.h"
+#include "../util/socketUtil.h"
+#include "../selector/socketSelector.h"
+S_NAMESPACE_BEGIN
+
+
+
+UdpAsyncApi::UdpAsyncApi()
+{
+	m_work_looper = nullptr;
+	m_notify_sender = nullptr;
+	m_selector = nullptr;
+}
+
+UdpAsyncApi::~UdpAsyncApi()
+{
+	ScopeMutex __l(m_mutex);
+	m_work_looper->removeMsgHandler(this);
+
+	while (m_ctxs.size() > 0)
+	{
+		auto it = m_ctxs.begin();
+		__releaseSocket(it->first);
+	}
+	delete m_selector;
+}
+
+bool UdpAsyncApi::init(MessageLooper * work_looper, void * notify_sender)
+{
+	ScopeMutex __l(m_mutex);
+	m_work_looper = work_looper;
+	m_notify_sender = notify_sender;
+
+	{
+		m_selector = new SocketSelector();
+		MessageLooperNotifyParam np;
+		np.m_notify_looper = m_work_looper;
+		np.m_notify_sender = m_selector;
+		np.m_notify_target = this;
+		if (!m_selector->init(m_work_looper, np))
+			return false;
+		if (!m_selector->start())
+			return false;
+	}
+
+	m_work_looper->addMsgHandler(this);
+	return true; 
+}
+
+bool UdpAsyncApi::audp_createSocket(socket_id_t * sid, const UdpSocketCreateParam & param)
+{
+	ScopeMutex __l(m_mutex);
+	socket_t socket = SocketUtil::openSocket(ESocketType_udp);
+	if (socket == INVALID_SOCKET)
+		return false;
+
+	__SocketCtx* ctx = new __SocketCtx();
+	ctx->m_sid = SocketUtil::genSid();
+	ctx->m_socket = socket;
+	ctx->m_create_param = param;
+	m_ctxs[ctx->m_sid] = ctx;
+
+	if (!m_selector->addUdpSocket(ctx->m_socket, ctx->m_sid))
+	{
+		__releaseSocket(ctx->m_sid);
+		return false;
+	}
+
+	*sid = ctx->m_sid;
+	return true;
+}
+
+void UdpAsyncApi::audp_releaseSocket(socket_id_t sid)
+{
+	ScopeMutex __l(m_mutex);
+	__releaseSocket(sid);
+}
+
+bool UdpAsyncApi::audp_sendTo(socket_id_t sid, uint64_t send_cmd_id, const byte_t * data, size_t data_len, Ip to_ip, uint32_t to_port)
+{
+	ScopeMutex __l(m_mutex);
+	__SocketCtx* ctx = get_map_element_by_key(m_ctxs, sid);
+	if (ctx == nullptr)
+		return false;
+	if (!m_selector->postSendToCmd(ctx->m_socket, ctx->m_sid, send_cmd_id, to_ip, to_port, data, data_len))
+		return false;
+	return true;
+}
+
+void UdpAsyncApi::onMessage(Message * msg, bool * is_handled)
+{
+	if (msg->m_target != this)
+		return;
+
+	ScopeMutex __l(m_mutex);
+	*is_handled = true;
+	switch (msg->m_msg_type)
+	{
+	case SocketSelector::EMsgType_socketClosed: __onMsg_SocketClosed(msg); break;
+	case SocketSelector::EMsgType_recvFromOk:	__onMsg_SocketRecvData(msg); break;
+	case SocketSelector::EMsgType_sendToEnd:	__onMsg_SocketSendDataEnd(msg); break;
+	}
+}
+
+void UdpAsyncApi::onMessageTimerTick(uint64_t timer_id, void * user_data)
+{
+}
+
+void UdpAsyncApi::__onMsg_SocketClosed(Message * msg)
+{
+	socket_t socket = (socket_t)msg->m_args.getUint64("tran_socket");
+	socket_id_t sid = msg->m_args.getUint64("session_id");
+	__SocketCtx* ctx = get_map_element_by_key(m_ctxs, sid);
+	if (ctx == nullptr)
+		return;
+
+	Msg_UdpSocketClosed* m = new Msg_UdpSocketClosed();
+	m->m_sid = ctx->m_sid;
+	__postMessageToTarget(m, ctx);
+
+	__releaseSocket(sid);
+}
+
+void UdpAsyncApi::__onMsg_SocketRecvData(Message * msg)
+{
+	//socket_t socket = msg->m_args.getUint64("tran_socket");
+	//socket_id_t sid = msg->m_args.getUint64("session_id");
+	//__SocketCtx* ctx = get_map_element_by_key(m_ctxs, sid);
+	//if (ctx == nullptr)
+	//	return;
+
+	//SocketSelector::Msg_TranRecvData* ms = (SocketSelector::Msg_TranRecvData *)msg;
+
+	//Msg_UdpSocketRecvData* m = new Msg_UdpSocketRecvData();
+	//m->m_sid = ctx->m_sid;
+	//m->m_from_ip = ms->m_from_ip;
+	//m->m_from_port = ms->m_from_port;
+	//m->m_recv_data = ms->m_recv_data;
+	//__postMessageToTarget(m, ctx);
+}
+
+void UdpAsyncApi::__onMsg_SocketSendDataEnd(Message * msg)
+{
+	socket_t socket = (socket_t)msg->m_args.getUint64("tran_socket");
+	socket_id_t sid = msg->m_args.getUint64("session_id");
+	__SocketCtx* ctx = get_map_element_by_key(m_ctxs, sid);
+	if (ctx == nullptr)
+		return;
+
+	Msg_UdpSocketSendDataEnd* m = new Msg_UdpSocketSendDataEnd();
+	m->m_sid = ctx->m_sid;
+	__postMessageToTarget(m, ctx);
+}
+
+void UdpAsyncApi::__releaseSocket(socket_id_t sid) 
+{
+	__SocketCtx* ctx = get_map_element_by_key(m_ctxs, sid);
+	if (ctx == nullptr)
+		return;
+
+	SocketUtil::closeSocket(ctx->m_socket);
+	m_selector->removeSocket(ctx->m_socket, ctx->m_sid);
+
+	delete_and_erase_map_element_by_key(&m_ctxs, sid);
+}
+
+UdpAsyncApi::__SocketCtx * UdpAsyncApi::__getSocketCtxBySocket(socket_t socket)
+{
+	for (auto it = m_ctxs.begin(); it != m_ctxs.end(); ++it)
+	{
+		if (it->second->m_socket == socket)
+			return it->second;
+	}
+	return nullptr;
+}
+
+void UdpAsyncApi::__postMessageToTarget(Message* msg, __SocketCtx * ctx)
+{
+	msg->m_sender = m_notify_sender;
+	msg->m_target = ctx->m_create_param.m_notify_target;
+	ctx->m_create_param.m_notify_looper->postMessage(msg);
+}
+
+
+
+
+S_NAMESPACE_END
+

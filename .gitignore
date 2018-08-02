@@ -1,0 +1,16 @@
+/project/win/TestSLibCore/*.log
+/project/win/TestSLibCore/TestSLibCore.vcxproj.filters
+/project/win/TestSLibCore/TestSLibCore.vcxproj.user
+/project/win/TestSLibCoreClient/TestSLibCoreClient.vcxproj.filters
+/project/win/TestSLibCoreClient/TestSLibCoreClient.vcxproj.user
+/project/win/TestSLibCoreServer/TestSLibCoreServer.vcxproj.filters
+/project/win/TestSLibCoreServer/TestSLibCoreServer.vcxproj.user
+/project/win/SLibCore/sLibCore.vcxproj.filters
+/project/win/SLibCore/sLibCore.vcxproj.user
+/project/win/TestSc/*.filters
+/project/win/TestSc/*.user
+/project/win/Sc/Sc.vcxproj.filters
+/project/win/Sc/Sc.vcxproj.user
+/project/win/TestScClient/TestScClient.vcxproj.filters
+/project/win/TestScClient/TestScClient.vcxproj.user
+/project/win/TestScServer/TestScServer.vcxproj.filters

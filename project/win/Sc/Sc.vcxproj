@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\comm\variant.cpp" />
+    <ClCompile Include="..\..\..\src\console\consoleApp.cpp" />
+    <ClCompile Include="..\..\..\src\log\consoleAppender.cpp" />
+    <ClCompile Include="..\..\..\src\log\fileAppender.cpp" />
+    <ClCompile Include="..\..\..\src\log\log.cpp" />
+    <ClCompile Include="..\..\..\src\log\logComm.cpp" />
+    <ClCompile Include="..\..\..\src\socket\api\socketApi.cpp" />
+    <ClCompile Include="..\..\..\src\socket\dns\dnsResolver.cpp" />
+    <ClCompile Include="..\..\..\src\socket\selector\socketSelector.cpp" />
+    <ClCompile Include="..\..\..\src\socket\tcp\helper\tcpConnector.cpp" />
+    <ClCompile Include="..\..\..\src\socket\tcp\tcpAsyncClientApi.cpp" />
+    <ClCompile Include="..\..\..\src\socket\tcp\tcpAsyncServerApi.cpp" />
+    <ClCompile Include="..\..\..\src\socket\tcp\tcpSyncApi.cpp" />
+    <ClCompile Include="..\..\..\src\socket\udp\udpAsyncApi.cpp" />
+    <ClCompile Include="..\..\..\src\socket\udp\udpSyncApi.cpp" />
+    <ClCompile Include="..\..\..\src\socket\util\socketUtil.cpp" />
+    <ClCompile Include="..\..\..\src\thread\messageLooper.cpp" />
+    <ClCompile Include="..\..\..\src\thread\messageLoopThread.cpp" />
+    <ClCompile Include="..\..\..\src\thread\thread.cpp" />
+    <ClCompile Include="..\..\..\src\util\fileUtil.cpp" />
+    <ClCompile Include="..\..\..\src\util\stringUtil.cpp" />
+    <ClCompile Include="..\..\..\src\util\timeUtil.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\src\comm\binary.h" />
+    <ClInclude Include="..\..\..\src\comm\comm.h" />
+    <ClInclude Include="..\..\..\src\comm\intType.h" />
+    <ClInclude Include="..\..\..\src\comm\m.h" />
+    <ClInclude Include="..\..\..\src\comm\ns.h" />
+    <ClInclude Include="..\..\..\src\comm\stlComm.h" />
+    <ClInclude Include="..\..\..\src\comm\variant.h" />
+    <ClInclude Include="..\..\..\src\console\consoleApp.h" />
+    <ClInclude Include="..\..\..\src\log\consoleAppender.h" />
+    <ClInclude Include="..\..\..\src\log\fileAppender.h" />
+    <ClInclude Include="..\..\..\src\log\log.h" />
+    <ClInclude Include="..\..\..\src\log\logComm.h" />
+    <ClInclude Include="..\..\..\src\log\logMarcro.h" />
+    <ClInclude Include="..\..\..\src\socket\api\socketApi.h" />
+    <ClInclude Include="..\..\..\src\socket\base\iDnsResolver.h" />
+    <ClInclude Include="..\..\..\src\socket\base\iSocketApi.h" />
+    <ClInclude Include="..\..\..\src\socket\base\iTcpAsyncApi.h" />
+    <ClInclude Include="..\..\..\src\socket\base\iTcpAsyncClientApi.h" />
+    <ClInclude Include="..\..\..\src\socket\base\iTcpAsyncServerApi.h" />
+    <ClInclude Include="..\..\..\src\socket\base\iTcpSyncApi.h" />
+    <ClInclude Include="..\..\..\src\socket\base\iUdpAsyncApi.h" />
+    <ClInclude Include="..\..\..\src\socket\base\iUdpSyncApi.h" />
+    <ClInclude Include="..\..\..\src\socket\base\socketType.h" />
+    <ClInclude Include="..\..\..\src\socket\dns\dnsResolver.h" />
+    <ClInclude Include="..\..\..\src\socket\selector\socketSelector.h" />
+    <ClInclude Include="..\..\..\src\socket\socketLib.h" />
+    <ClInclude Include="..\..\..\src\socket\tcp\helper\tcpConnector.h" />
+    <ClInclude Include="..\..\..\src\socket\tcp\tcpAsyncClientApi.h" />
+    <ClInclude Include="..\..\..\src\socket\tcp\tcpAsyncServerApi.h" />
+    <ClInclude Include="..\..\..\src\socket\tcp\tcpSyncApi.h" />
+    <ClInclude Include="..\..\..\src\socket\udp\udpAsyncApi.h" />
+    <ClInclude Include="..\..\..\src\socket\udp\udpSyncApi.h" />
+    <ClInclude Include="..\..\..\src\socket\util\socketUtil.h" />
+    <ClInclude Include="..\..\..\src\thread\messageLooper.h" />
+    <ClInclude Include="..\..\..\src\thread\messageLoopThread.h" />
+    <ClInclude Include="..\..\..\src\thread\messageType.h" />
+    <ClInclude Include="..\..\..\src\thread\thread.h" />
+    <ClInclude Include="..\..\..\src\thread\threadComm.h" />
+    <ClInclude Include="..\..\..\src\thread\threadLib.h" />
+    <ClInclude Include="..\..\..\src\util\consoleUtil.h" />
+    <ClInclude Include="..\..\..\src\util\fileUtil.h" />
+    <ClInclude Include="..\..\..\src\util\stringUtil.h" />
+    <ClInclude Include="..\..\..\src\util\timeUtil.h" />
+    <ClInclude Include="..\..\..\src\util\utilLib.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{10E7BB5D-6CC5-49BF-AE36-47ABCC40ED86}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>sLibCore</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <ProjectName>Sc</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <PostBuildEvent>
+      <Command>echo.bat</Command>
+    </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>Ws2_32.lib</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>Ws2_32.lib</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
