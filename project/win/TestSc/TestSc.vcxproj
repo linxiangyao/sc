@@ -41,6 +41,8 @@
     <ClInclude Include="..\..\..\test\socket\testTcpConnector.h" />
     <ClInclude Include="..\..\..\test\socket\testTcpSyncClient.h" />
     <ClInclude Include="..\..\..\test\socket\testTcpSyncSvr.h" />
+    <ClInclude Include="..\..\..\test\socket\testUdpSyncClient.h" />
+    <ClInclude Include="..\..\..\test\socket\testUdpSyncSvr.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\testSc.cpp" />
@@ -127,7 +129,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
