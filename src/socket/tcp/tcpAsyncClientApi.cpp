@@ -30,6 +30,7 @@ TcpAsyncClientApi::~TcpAsyncClientApi()
 
 bool TcpAsyncClientApi::init(MessageLooper* work_looper, void* notify_sender)
 {
+	slog_d("TcpAsyncClientApi:: init");
 	ScopeMutex __l(m_mutex);
 	m_work_looper = work_looper;
 	m_work_looper->addMsgHandler(this);
@@ -37,7 +38,10 @@ bool TcpAsyncClientApi::init(MessageLooper* work_looper, void* notify_sender)
 
 	m_connector = new TcpConnector();
 	if (!m_connector->init(m_work_looper, m_work_looper, this))
+	{
+		slog_e("TcpAsyncClientApi:: init fail to m_connector->init");
 		return false;
+	}
 
 	{
 		m_selector = new SocketSelector();
@@ -46,9 +50,15 @@ bool TcpAsyncClientApi::init(MessageLooper* work_looper, void* notify_sender)
 		np.m_notify_sender = m_selector;
 		np.m_notify_target = this;
 		if (!m_selector->init(m_work_looper, np))
+		{
+			slog_e("TcpAsyncClientApi:: init fail to m_selector->init");
 			return false;
+		}
 		if (!m_selector->start())
+		{
+			slog_e("TcpAsyncClientApi:: init fail to m_selector->start");
 			return false;
+		}
 	}
 
 	return true;
@@ -318,7 +328,6 @@ void TcpAsyncClientApi::__postMsgToTarget(Message * msg, __SocketCtx * ctx)
 		return;
 	msg->m_sender = m_notify_sender;
 	msg->m_target = ctx->m_create_param.m_notify_target;
-	//msg->m_args.setUint64("client_sid", ctx->m_sid);
 	ctx->m_create_param.m_notify_looper->postMessage(msg);
 }
 

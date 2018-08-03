@@ -31,6 +31,7 @@ TcpAsyncServerApi::~TcpAsyncServerApi()
 bool TcpAsyncServerApi::init(MessageLooper * work_looper, void* notify_sender)
 {
 	ScopeMutex __l(m_mutex);
+	slog_d("TcpAsyncServerApi:: init");
 	m_work_looper = work_looper;
 	m_notify_sender = notify_sender;
 
@@ -47,6 +48,7 @@ bool TcpAsyncServerApi::init(MessageLooper * work_looper, void* notify_sender)
 		}
 		if (!m_selecotr->start())
 		{
+			slog_e("TcpAsyncServerApi:: init fail to m_selecotr->start");
 			return false;
 		}
 	}

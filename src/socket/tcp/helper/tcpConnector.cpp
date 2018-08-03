@@ -11,7 +11,6 @@ S_NAMESPACE_BEGIN
 class TcpConnector::__WorkRun : public IThreadRun
 {
 public:
-
 	__WorkRun(MessageLooper* notify_looper, TcpConnector* notify_target, const __SvrInfo& svr_info)
 	{
 		m_notify_looper = notify_looper;
@@ -27,6 +26,7 @@ private:
 	virtual void run() override
 	{
 		bool is_ok = SocketUtil::connect(m_svr_info.m_socket, m_svr_info.m_ip, m_svr_info.m_port);
+		slog_d("TcpConnector:: connect end, s=%0, is_ok=%1", m_svr_info.m_socket, is_ok);
 		__notify(is_ok);
 	}
 
@@ -91,6 +91,7 @@ void TcpConnector::stopTcpConnector()
 bool TcpConnector::startToConnectTcpSocket(socket_t s, Ip svr_ip, uint32_t svr_port)
 {
 	ScopeMutex _l(m_mutex);
+	slog_d("TcpConnector:: startToConnectTcpSocket, s=%0", s);
 	__SvrInfo* info = new __SvrInfo(s, svr_ip, svr_port);
 	m_svr_infos.push_back(info);
 	__doConnect();
@@ -100,6 +101,7 @@ bool TcpConnector::startToConnectTcpSocket(socket_t s, Ip svr_ip, uint32_t svr_p
 void TcpConnector::stopConnectTcpSocket(socket_t s)
 {
 	ScopeMutex _l(m_mutex);
+	slog_d("TcpConnector:: stopConnectTcpSocket, s=%0", s);
 	for (size_t i = 0; i < m_connect_threads.size(); ++i)
 	{
 		__WorkRun* run = (__WorkRun*)m_connect_threads[i]->getRun();

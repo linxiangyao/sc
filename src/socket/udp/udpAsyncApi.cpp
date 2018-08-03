@@ -7,6 +7,7 @@ S_NAMESPACE_BEGIN
 
 UdpAsyncApi::UdpAsyncApi()
 {
+	slog_d("UdpAsyncApi:: new=%0", (uint64_t)this);
 	m_work_looper = nullptr;
 	m_notify_sender = nullptr;
 	m_selector = nullptr;
@@ -14,6 +15,7 @@ UdpAsyncApi::UdpAsyncApi()
 
 UdpAsyncApi::~UdpAsyncApi()
 {
+	slog_d("UdpAsyncApi:: delete=%0", (uint64_t)this);
 	ScopeMutex __l(m_mutex);
 	m_work_looper->removeMsgHandler(this);
 
@@ -28,6 +30,7 @@ UdpAsyncApi::~UdpAsyncApi()
 bool UdpAsyncApi::init(MessageLooper * work_looper, void * notify_sender)
 {
 	ScopeMutex __l(m_mutex);
+	slog_d("UdpAsyncApi:: init");
 	m_work_looper = work_looper;
 	m_notify_sender = notify_sender;
 
@@ -38,9 +41,15 @@ bool UdpAsyncApi::init(MessageLooper * work_looper, void * notify_sender)
 		np.m_notify_sender = m_selector;
 		np.m_notify_target = this;
 		if (!m_selector->init(m_work_looper, np))
+		{
+			slog_e("UdpAsyncApi:: init fail m_selector->init");
 			return false;
+		}
 		if (!m_selector->start())
+		{
+			slog_e("UdpAsyncApi:: init fail m_selector->start");
 			return false;
+		}
 	}
 
 	m_work_looper->addMsgHandler(this);
@@ -52,7 +61,10 @@ bool UdpAsyncApi::audp_createSocket(socket_id_t * sid, const UdpSocketCreatePara
 	ScopeMutex __l(m_mutex);
 	socket_t socket = SocketUtil::openSocket(ESocketType_udp);
 	if (socket == INVALID_SOCKET)
+	{
+		slog_e("UdpAsyncApi:: audp_createSocket fail to openSocket");
 		return false;
+	}
 
 	__SocketCtx* ctx = new __SocketCtx();
 	ctx->m_sid = SocketUtil::genSid();
@@ -63,16 +75,19 @@ bool UdpAsyncApi::audp_createSocket(socket_id_t * sid, const UdpSocketCreatePara
 	if (!m_selector->addUdpSocket(ctx->m_socket, ctx->m_sid))
 	{
 		__releaseSocket(ctx->m_sid);
+		slog_e("UdpAsyncApi:: audp_createSocket fail to m_selector->addUdpSocket");
 		return false;
 	}
 
 	*sid = ctx->m_sid;
+	slog_d("UdpAsyncApi:: audp_createSocket sid=%0, socket=%1", ctx->m_sid, ctx->m_socket);
 	return true;
 }
 
 void UdpAsyncApi::audp_releaseSocket(socket_id_t sid)
 {
 	ScopeMutex __l(m_mutex);
+	slog_d("UdpAsyncApi:: audp_releaseSocket sid=%0", sid);
 	__releaseSocket(sid);
 }
 

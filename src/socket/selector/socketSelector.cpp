@@ -7,17 +7,20 @@ S_NAMESPACE_BEGIN
 
 SocketSelector::SocketSelector()
 {
+	slog_d("SocketSelector:: new=%0", (uint64_t)this);
 	m_work_looper = nullptr;
 }
 
 SocketSelector::~SocketSelector()
 {
+	slog_d("SocketSelector:: delete=%0", (uint64_t)this);
 	stop();
 }
 
 bool SocketSelector::init(MessageLooper* work_looper, const MessageLooperNotifyParam& notify_param)
 {
 	ScopeMutex __l(m_mutex);
+	slog_d("SocketSelector:: init");
 	m_work_looper = work_looper;
 	m_notify_param = notify_param;
 
@@ -27,6 +30,7 @@ bool SocketSelector::init(MessageLooper* work_looper, const MessageLooperNotifyP
 bool SocketSelector::start()
 {
 	ScopeMutex __l(m_mutex);
+	slog_d("SocketSelector:: start");
 
 #ifdef S_OS_WIN
 	SYSTEM_INFO si;
@@ -37,7 +41,11 @@ bool SocketSelector::start()
 	//for (size_t i = 0; i < si.dwNumberOfProcessors * 2; ++i)
 	{
 		Thread* t = new Thread(new IocpUtil::IocpTranRun(m_completionPort, m_notify_param));
-		t->start();
+		if (!t->start())
+		{
+			slog_d("SocketSelector:: start fail to t->start"); //TODO: release resource
+			return false;
+		}
 		m_tran_threads.push_back(t);
 	}
 #else
@@ -51,6 +59,7 @@ void SocketSelector::stop()
 	ScopeMutex __l(m_mutex);
 	if (m_is_exit)
 		return;
+	slog_d("SocketSelector:: stop");
 	m_is_exit = true;
 
 	for (auto it = m_tran_sockets.begin(); it != m_tran_sockets.end(); ++it)
@@ -67,6 +76,7 @@ bool SocketSelector::addTcpSocket(socket_t socket, ETcpSocketType socket_type, u
 	ScopeMutex __l(m_mutex);
 	if (m_is_exit)
 		return false;
+	slog_d("SocketSelector:: addTcpSocket socket=%0, socket_type=%1, session_id=%2", socket, socket_type, session_id);
 
 	if (socket_type == ETcpSocketType_svr_listen)
 		return __addAccpetSocket(socket, session_id);
@@ -79,6 +89,7 @@ bool SocketSelector::addUdpSocket(socket_t socket, uint64_t session_id)
 	ScopeMutex __l(m_mutex);
 	if (m_is_exit)
 		return false;
+	slog_d("SocketSelector:: addUdpSocket socket=%0, session_id=%1", socket, session_id);
 
 	return __addTranSocket(socket, session_id);
 }
@@ -89,6 +100,8 @@ void SocketSelector::removeSocket(socket_t socket, uint64_t session_id)
 	ScopeMutex __l(m_mutex);
 	if (m_is_exit)
 		return;
+
+	slog_d("SocketSelector:: removeSocket socket=%0, session_id=%1", socket, session_id);
 	delete_and_erase_map_element_by_key(&m_tran_sockets, socket);
 }
 

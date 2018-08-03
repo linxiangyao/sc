@@ -6,10 +6,12 @@ S_NAMESPACE_BEGIN
 
 TcpSyncApi::TcpSyncApi()
 {
+	slog_d("TcpSyncApi:: new=%0", (uint64_t)this);
 }
 
 TcpSyncApi::~TcpSyncApi()
 {
+	slog_d("TcpSyncApi:: delete=%0", (uint64_t)this);
 	for (SidToSocketMap::iterator it = m_sid_2_socket.begin(); it != m_sid_2_socket.end(); ++it)
 	{
 		SocketUtil::closeSocket(it->second);
