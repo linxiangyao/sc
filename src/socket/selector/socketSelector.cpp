@@ -81,7 +81,7 @@ bool SocketSelector::addTcpSocket(socket_t socket, ETcpSocketType socket_type, u
 	if (socket_type == ETcpSocketType_svr_listen)
 		return __addAccpetSocket(socket, session_id);
 	else
-		return __addTranSocket(socket, session_id);
+		return __addTranSocket(socket, session_id, true);
 }
 
 bool SocketSelector::addUdpSocket(socket_t socket, uint64_t session_id)
@@ -91,7 +91,7 @@ bool SocketSelector::addUdpSocket(socket_t socket, uint64_t session_id)
 		return false;
 	slog_d("SocketSelector:: addUdpSocket socket=%0, session_id=%1", socket, session_id);
 
-	return __addTranSocket(socket, session_id);
+	return __addTranSocket(socket, session_id, false);
 }
 
 void SocketSelector::removeSocket(socket_t socket, uint64_t session_id)
@@ -131,7 +131,7 @@ uint64_t SocketSelector::genSendCmdId()
 	return ++s_send_cmd_id_seed;
 }
 
-bool SocketSelector::__addTranSocket(socket_t socket, uint64_t session_id)
+bool SocketSelector::__addTranSocket(socket_t socket, uint64_t session_id, bool is_tcp)
 {
 #ifdef S_OS_WIN
 	if (m_tran_sockets.find(socket) != m_tran_sockets.end())
@@ -144,10 +144,10 @@ bool SocketSelector::__addTranSocket(socket_t socket, uint64_t session_id)
 	ctx->m_socket = socket;
 	m_tran_sockets[socket] = ctx;
 
-	//for (size_t i = 0; i < 10; ++i)
-	{
+	if (is_tcp)
 		IocpUtil::postRecvCmd(socket, session_id, IocpUtil::genCmdId());
-	}
+	else
+		IocpUtil::postRecvFromCmd(socket, session_id, IocpUtil::genCmdId());
 #else
 #endif
 

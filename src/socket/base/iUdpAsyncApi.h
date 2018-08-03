@@ -21,10 +21,13 @@ public:
 	class UdpSocketCreateParam
 	{
 	public:
-		UdpSocketCreateParam() { m_notify_looper = NULL; m_notify_target = NULL; }
+		UdpSocketCreateParam() { m_notify_looper = NULL; m_notify_target = NULL; m_is_bind = false; m_bind_port = 0;}
 
 		MessageLooper* m_notify_looper;
 		void* m_notify_target;
+		Ip m_bind_ip;
+		uint32_t m_bind_port;
+		bool m_is_bind;
 	};
 
 	class Msg_UdpSocketClosed : public Message

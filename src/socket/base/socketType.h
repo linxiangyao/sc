@@ -76,7 +76,20 @@ public:
 	Ip(in6_addr v6) { m_type = EIpType_v6; __cpV6(&m_value.m_v6, &v6); }
 	Ip(const Ip& ip) { __cpIp(ip); }
 	Ip& operator =(const Ip& ip) { __cpIp(ip); return *this; }
-	
+
+	bool operator != (const Ip& ip2)
+	{
+		if (m_type != ip2.m_type)
+			return true;		
+		if (memcmp(&m_value.m_v6, &ip2.m_value.m_v6, sizeof(ip2.m_value.m_v6)) != 0)
+			return true;
+		return false;
+	}
+
+	bool operator == (const Ip& ip2)
+	{
+		return !(*this != ip2);
+	}
 
 	EIpType m_type;
 	union
@@ -103,8 +116,9 @@ private:
 	}
 };
 
-
-
+//
+//bool operator == (const Ip& ip1, const Ip& ip2);
+//bool operator != (const Ip& ip1, const Ip& ip2);
 
 
 

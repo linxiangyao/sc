@@ -44,7 +44,8 @@ int main(int argc, char** argv)
 	//__testTcpSyncClient();
 	//__testTcpSyncSvr();
 	//__testIocpSvr();
-	__testUdpSyncSvr();
+	//__testUdpSyncSvr();
+	__testUdpAsyncSvr();
 
 
 

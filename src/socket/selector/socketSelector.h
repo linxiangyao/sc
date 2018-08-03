@@ -104,7 +104,7 @@ private:
 	};
 
 
-	bool __addTranSocket(socket_t socket, uint64_t connection_id);
+	bool __addTranSocket(socket_t socket, uint64_t connection_id, bool is_tcp);
 	bool __addAccpetSocket(socket_t socket, uint64_t connection_id);
 
 	MessageLooper* m_work_looper; 

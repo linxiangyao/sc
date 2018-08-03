@@ -9,8 +9,6 @@ uint64_t SocketUtil::m_connection_id_seed = 0;
 
 
 
-
-
 socket_id_t SocketUtil::genSid()
 {
 	ScopeMutex __l(s_sid_mutex);
@@ -522,12 +520,14 @@ bool SocketUtil::sockaddrToIpAndPort(const sockaddr * addr, uint32_t addr_len, I
 	if (addr_len == sizeof(sockaddr_in))
 	{
 		sockaddr_in* addr_v4 = (sockaddr_in*)addr;
+		ip->m_type = EIpType_v4;
 		ip->m_value.m_v4 = addr_v4->sin_addr;
 		*port = nToHs(addr_v4->sin_port);
 	}
 	else if (addr_len == sizeof(sockaddr_in6))
 	{
 		sockaddr_in6* addr_v6 = (sockaddr_in6*)addr;
+		ip->m_type = EIpType_v6;
 		ip->m_value.m_v6 = addr_v6->sin6_addr;
 		*port = nToHs(addr_v6->sin6_port);
 	}

@@ -144,10 +144,7 @@ private:
 
 	bool __sendPackToSvr()
 	{
-		std::string str = std::string() + "test_case=upload_start"
-			+ ",pack_size=" + StringUtil::toString(__TestCallbackClientSpeedLogic_uploadPackSize)
-			+ ",pack_count=" + StringUtil::toString(__TestCallbackClientSpeedLogic_uploadPackCount)
-			+ ",";
+		std::string str = std::string() + "hello, i am client, how are you? " + StringUtil::toString(++m_send_count);
 		return __sendPackToSvr(str);
 	}
 
@@ -158,6 +155,7 @@ private:
 	socket_id_t m_sid;
 	uint64_t m_connection_id;
 	uint64_t m_timer_id = 0;
+	uint64_t m_send_count = 0;
 };
 
 

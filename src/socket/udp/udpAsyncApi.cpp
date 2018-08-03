@@ -72,6 +72,15 @@ bool UdpAsyncApi::audp_createSocket(socket_id_t * sid, const UdpSocketCreatePara
 	ctx->m_create_param = param;
 	m_ctxs[ctx->m_sid] = ctx;
 
+	if (param.m_is_bind)
+	{
+		if (!SocketUtil::bind(socket, param.m_bind_ip, param.m_bind_port))
+		{
+			slog_e("UdpAsyncApi:: audp_createSocket fail to SocketUtil::bind");
+			return false;
+		}
+	}
+
 	if (!m_selector->addUdpSocket(ctx->m_socket, ctx->m_sid))
 	{
 		__releaseSocket(ctx->m_sid);

@@ -12,8 +12,21 @@ IocpUtil::MyOverlap * IocpUtil::newMyOverlap(socket_t socket, uint64_t session_i
 	overlap->m_session_id = session_id;
 	overlap->m_cmd_type = cmd_type;
 	overlap->m_cmd_id = cmd_id;
-	overlap->m_buffer.buf = NULL;
-	overlap->m_buffer.len = 0;
+	memset(&overlap->m_addr, 0, sizeof(overlap->m_addr));
+	overlap->m_addr_len = sizeof(overlap->m_addr);
+	if (cmd_type == EIocpCmdType_recv || cmd_type == EIocpCmdType_recvFrom)
+	{
+		const int __OVERLAP_RECV_BUF_LEN = (1024 * 10);
+		overlap->m_buffer.buf = new char[__OVERLAP_RECV_BUF_LEN];
+		overlap->m_buffer.len = __OVERLAP_RECV_BUF_LEN;
+		memset(overlap->m_buffer.buf, 0, __OVERLAP_RECV_BUF_LEN);
+	}
+	else
+	{
+		overlap->m_buffer.buf = NULL;
+		overlap->m_buffer.len = 0;
+	}
+
 	return overlap;
 }
 
@@ -42,10 +55,7 @@ uint64_t IocpUtil::genCmdId()
 
 bool IocpUtil::postRecvCmd(socket_t socket, uint64_t session_id, uint64_t cmd_id)
 {
-	const int __OVERLAP_RECV_BUF_LEN = (1024 * 10);
 	MyOverlap* overlap = newMyOverlap(socket, session_id, EIocpCmdType_recv, cmd_id);
-	overlap->m_buffer.buf = new char[__OVERLAP_RECV_BUF_LEN];
-	overlap->m_buffer.len = __OVERLAP_RECV_BUF_LEN;
 	DWORD flag = 0;
 	DWORD numberOfBytesRecvd = 0;
 	int ret = WSARecv(socket, &overlap->m_buffer, 1, &numberOfBytesRecvd, &flag,
@@ -112,14 +122,11 @@ bool IocpUtil::postSendCmd(socket_t socket, uint64_t session_id, uint64_t cmd_id
 
 bool IocpUtil::postRecvFromCmd(socket_t socket, uint64_t session_id, uint64_t cmd_id)
 {
-	const int __OVERLAP_RECV_BUF_LEN = (1024 * 10);
 	MyOverlap* overlap = newMyOverlap(socket, session_id, EIocpCmdType_recvFrom, cmd_id);
-	overlap->m_buffer.buf = new char[__OVERLAP_RECV_BUF_LEN];
-	overlap->m_buffer.len = __OVERLAP_RECV_BUF_LEN;
 	DWORD flag = 0;
 	DWORD numberOfBytesRecvd = 0;
 
-	int ret = WSARecvFrom(socket, &overlap->m_buffer, 1, &numberOfBytesRecvd, &flag, (sockaddr*)&overlap->m_addr, &overlap->m_addr_len,
+	int ret = WSARecvFrom(socket, &overlap->m_buffer, 1, &numberOfBytesRecvd, &flag, (struct sockaddr*)&overlap->m_addr, &overlap->m_addr_len,
 		&overlap->m_overlap, NULL);
 
 	if (ret != 0)
