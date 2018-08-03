@@ -25,20 +25,15 @@ public:
 	{
 		if (cap == 0)
 			return;
-		if (m_data != NULL || m_cap != 0 || m_len != 0)
+		if (m_data != nullptr || m_cap != 0 || m_len != 0)
 			return;
 
 		m_cap = cap;
 		m_data = new byte_t[cap];
 	}
-    
-    void attach(Binary& binary) {
-		__attach(binary.m_data, binary.m_len, binary.m_cap);
-        binary.detach();
-    }
 
 	void attach(Binary* binary) {
-		if (binary == NULL)
+		if (binary == nullptr)
 		{
 			clear();
 			return;
@@ -57,14 +52,14 @@ public:
 
 	void detachTo(Binary* bin)
 	{
-		if (bin == NULL)
+		if (bin == nullptr)
 			return;
 		bin->attach(this);
 	}
 
 	void detachTo(byte_t** data, size_t* len)
 	{
-		if (data == NULL || len == NULL)
+		if (data == nullptr || len == nullptr)
 			return;
 		*data = getData();
 		*len = getLen();
@@ -81,9 +76,9 @@ public:
 
 	void copyTo(byte_t** data, size_t* len) const
 	{
-		if (data == NULL || len == NULL)
+		if (data == nullptr || len == nullptr)
 			return;
-		*data = NULL;
+		*data = nullptr;
 		*len = 0;
 		if (m_len == 0)
 			return;
@@ -163,7 +158,7 @@ public:
     }
 
     void clear() {
-		if (m_data == NULL)
+		if (m_data == nullptr)
 			return;
 
         delete[] m_data;
@@ -172,13 +167,13 @@ public:
 
     const byte_t* getData() const {
 		if (m_len == 0)
-			return NULL;
+			return nullptr;
         return m_data;
     }
 
     byte_t* getData() {
 		if (m_len == 0)
-			return NULL;
+			return nullptr;
         return m_data;
     }
 
@@ -194,7 +189,7 @@ public:
 private:
 	void __attach(byte_t* data, size_t len, size_t cap)
 	{
-		if (data == NULL || len == 0)
+		if (data == nullptr || len == 0)
 		{
 			clear();
 			return;
@@ -212,7 +207,7 @@ private:
 	}
 
 	void __copy(const byte_t* data, size_t len) {
-		if (data == NULL || len == 0)
+		if (data == nullptr || len == 0)
 			return;
 		if (data == m_data)
 		{
@@ -233,7 +228,7 @@ private:
 	}
 
 	void __append(const byte_t* data, size_t len) {
-		if (data == NULL || len == 0)
+		if (data == nullptr || len == 0)
 			return;
 
 		size_t new_len = m_len + len;
@@ -280,7 +275,7 @@ private:
 
 	void __setMemeberToNull()
 	{
-		m_data = NULL;
+		m_data = nullptr;
 		m_len = 0;
 		m_cap = 0;
 	}
@@ -311,7 +306,7 @@ public:
 	const byte_t* read(size_t len)
 	{
 		if (m_read_pos + len > m_len)
-			return NULL;
+			return nullptr;
 
 		size_t cur_pos = m_read_pos;
 		m_read_pos += len;

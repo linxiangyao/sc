@@ -347,5 +347,5 @@ void __testTcpRawClient()
 
 
 
-#endif // !TESTSOCKETCLIENT_H
+#endif
 

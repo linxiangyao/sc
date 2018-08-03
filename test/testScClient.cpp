@@ -16,14 +16,15 @@
 #include "socket/testTcpSyncClient.h"
 #include "socket/testTcpSyncSvr.h"
 #include "socket/testUdpSyncClient.h"
+#include "socket/testUdpAsyncClient.h"
 using namespace std;
 USING_NAMESPACE_S
+
 
 
 int main(int argc, char** argv)
 {
 	printf("test start **************************************************************\n");
-
 
 
 	//__testBinary();
@@ -45,26 +46,14 @@ int main(int argc, char** argv)
 	//__testTcpAsyncClient();
 	//__testIocpClient();
 	//__testTcpSyncSvr();
-
-	__testUdpSyncClient();
+	//__testUdpSyncClient();
+	__testUdpAsyncClient();
 
 
 
 	printf("test end **************************************************************\n");
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

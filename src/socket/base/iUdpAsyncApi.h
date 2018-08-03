@@ -15,7 +15,7 @@ public:
 	{
 		EMsgType_udpSocketClosed = -267427361,
 		EMsgType_udpSocketRecvData,
-		EMsgType_udpSendDataEnd,
+		EMsgType_udpSocketSendDataEnd,
 	};
 
 	class UdpSocketCreateParam
@@ -37,7 +37,7 @@ public:
 	class Msg_UdpSocketSendDataEnd : public Message
 	{
 	public:
-		Msg_UdpSocketSendDataEnd() { m_msg_type = EMsgType_udpSendDataEnd; m_sid = 0; }
+		Msg_UdpSocketSendDataEnd() { m_msg_type = EMsgType_udpSocketSendDataEnd; m_sid = 0; }
 		socket_id_t m_sid;
 		//Ip m_to_ip;
 		//uint32_t m_to_port;

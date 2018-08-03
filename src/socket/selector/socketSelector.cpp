@@ -458,7 +458,7 @@ void IocpUtil::IocpTranRun::__onSocketClose(MyOverlap * overlap)
 
 void IocpUtil::IocpTranRun::__onSocketRecvData(MyOverlap * overlap, uint32_t numberOfBytesTran)
 {
-	slog_d("iocp_svr_tran:: recv data event, cmd_id=%0, len=%1", overlap->m_cmd_id, (uint32_t)numberOfBytesTran);
+	slog_d("iocp_svr_tran:: __onSocketRecvData, recv data event, cmd_id=%0, len=%1", overlap->m_cmd_id, (uint32_t)numberOfBytesTran);
 
 	if (overlap->m_cmd_type == EIocpCmdType_recv)
 	{
@@ -469,7 +469,7 @@ void IocpUtil::IocpTranRun::__onSocketRecvData(MyOverlap * overlap, uint32_t num
 			__postSocketClosedMsg(overlap);
 		}
 	}
-	else
+	else if (overlap->m_cmd_type == EIocpCmdType_recvFrom)
 	{
 		__postRecvFromOkMsg(overlap, numberOfBytesTran);
 
@@ -478,16 +478,26 @@ void IocpUtil::IocpTranRun::__onSocketRecvData(MyOverlap * overlap, uint32_t num
 			__postSocketClosedMsg(overlap);
 		}
 	}
+	else
+	{
+		slog_e("iocp_svr_tran:: __onSocketRecvData, unknown cmd_type=%0", overlap->m_cmd_type);
+	}
 }
 
 void IocpUtil::IocpTranRun::__onSocketSendDataEnd(bool is_ok, MyOverlap * overlap, uint32_t numberOfBytesTran)
 {
-	slog_d("iocp_svr_tran:: send data end event, is_ok=%0, cmd_id=%1, len=%2\n", is_ok, overlap->m_cmd_id, (uint32_t)numberOfBytesTran);
+	slog_d("iocp_svr_tran:: __onSocketSendDataEnd, send data end event, is_ok=%0, cmd_id=%1, len=%2\n", is_ok, overlap->m_cmd_id, (uint32_t)numberOfBytesTran);
 	if (numberOfBytesTran != overlap->m_buffer.len)
 	{
-		slog_e("IocpTranRun:: numberOfBytesTran != overlap->m_buffer.len");
+		slog_e("IocpTranRun:: __onSocketSendDataEnd, numberOfBytesTran != overlap->m_buffer.len");
 	}
-	__postSendEndMsg(is_ok, overlap);
+
+	if (overlap->m_cmd_type == EIocpCmdType_send)
+		__postSendEndMsg(is_ok, overlap);
+	else if (overlap->m_cmd_type == EIocpCmdType_sendTo)
+		__postSendToEndMsg(is_ok, overlap);
+	else
+		slog_e("iocp_svr_tran:: __onSocketSendDataEnd, unknown cmd_type=%0", overlap->m_cmd_type);
 }
 
 void IocpUtil::IocpTranRun::__postSocketClosedMsg(MyOverlap * overlap)

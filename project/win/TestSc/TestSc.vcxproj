@@ -41,6 +41,8 @@
     <ClInclude Include="..\..\..\test\socket\testTcpConnector.h" />
     <ClInclude Include="..\..\..\test\socket\testTcpSyncClient.h" />
     <ClInclude Include="..\..\..\test\socket\testTcpSyncSvr.h" />
+    <ClInclude Include="..\..\..\test\socket\testUdpAsyncClient.h" />
+    <ClInclude Include="..\..\..\test\socket\testUdpAsyncSvr.h" />
     <ClInclude Include="..\..\..\test\socket\testUdpSyncClient.h" />
     <ClInclude Include="..\..\..\test\socket\testUdpSyncSvr.h" />
   </ItemGroup>

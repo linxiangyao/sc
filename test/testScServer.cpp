@@ -17,6 +17,7 @@
 #include "socket/testTcpSyncSvr.h"
 #include "socket/testIocpSvr.h"
 #include "socket/testUdpSyncSvr.h"
+#include "socket/testUdpAsyncSvr.h"
 using namespace std;
 USING_NAMESPACE_S
 

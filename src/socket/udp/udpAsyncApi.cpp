@@ -123,26 +123,26 @@ void UdpAsyncApi::__onMsg_SocketClosed(Message * msg)
 
 void UdpAsyncApi::__onMsg_SocketRecvData(Message * msg)
 {
-	//socket_t socket = msg->m_args.getUint64("tran_socket");
-	//socket_id_t sid = msg->m_args.getUint64("session_id");
-	//__SocketCtx* ctx = get_map_element_by_key(m_ctxs, sid);
-	//if (ctx == nullptr)
-	//	return;
+	SocketSelector::Msg_RecvFromOk* msg_recv_from = (SocketSelector::Msg_RecvFromOk*)msg;
+	socket_t socket = msg_recv_from->m_tran_socket;
+	socket_id_t sid = msg_recv_from->m_session_id;
+	__SocketCtx* ctx = get_map_element_by_key(m_ctxs, sid);
+	if (ctx == nullptr)
+		return;
 
-	//SocketSelector::Msg_TranRecvData* ms = (SocketSelector::Msg_TranRecvData *)msg;
-
-	//Msg_UdpSocketRecvData* m = new Msg_UdpSocketRecvData();
-	//m->m_sid = ctx->m_sid;
-	//m->m_from_ip = ms->m_from_ip;
-	//m->m_from_port = ms->m_from_port;
-	//m->m_recv_data = ms->m_recv_data;
-	//__postMessageToTarget(m, ctx);
+	Msg_UdpSocketRecvData* m = new Msg_UdpSocketRecvData();
+	m->m_sid = ctx->m_sid;
+	m->m_from_ip = msg_recv_from->m_from_ip;
+	m->m_from_port = msg_recv_from->m_from_port;
+	m->m_recv_data.attach(&msg_recv_from->m_recv_data);
+	__postMessageToTarget(m, ctx);
 }
 
 void UdpAsyncApi::__onMsg_SocketSendDataEnd(Message * msg)
 {
-	socket_t socket = (socket_t)msg->m_args.getUint64("tran_socket");
-	socket_id_t sid = msg->m_args.getUint64("session_id");
+	SocketSelector::Msg_sendToEnd* msg_send_to_end = (SocketSelector::Msg_sendToEnd*)msg;
+	socket_t socket = msg_send_to_end->m_tran_socket;
+	socket_id_t sid = msg_send_to_end->m_session_id;
 	__SocketCtx* ctx = get_map_element_by_key(m_ctxs, sid);
 	if (ctx == nullptr)
 		return;

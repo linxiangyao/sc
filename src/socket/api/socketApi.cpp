@@ -101,15 +101,16 @@ bool SocketApi::init(MessageLooper * work_looper)
 	if (!m_tcp_async_client_api->init(m_work_looper, this))
 		return false;
 
-	{
-		m_tcp_async_server_api = new TcpAsyncServerApi();
-		if (!m_tcp_async_server_api->init(m_work_looper, this))
-			return false;
-	}
+	m_tcp_async_server_api = new TcpAsyncServerApi();
+	if (!m_tcp_async_server_api->init(m_work_looper, this))
+		return false;
 
 	m_udp_sync_api = new UdpSyncApi();
+
 	m_udp_async_api = new UdpAsyncApi();
-	
+	if (!m_udp_async_api->init(m_work_looper, this))
+		return false;
+
 	return true;
 }
 
@@ -235,16 +236,17 @@ bool SocketApi::udp_recvFrom(socket_id_t sid, byte_t* buf, size_t buf_len, Ip* f
 
 bool SocketApi::audp_createSocket(socket_id_t * sid, const UdpSocketCreateParam & param)
 {
-	return false;
+	return m_udp_async_api->audp_createSocket(sid, param);
 }
 
 void SocketApi::audp_releaseSocket(socket_id_t sid)
 {
+	m_udp_async_api->audp_releaseSocket(sid);
 }
 
 bool SocketApi::audp_sendTo(socket_id_t sid, uint64_t send_id, const byte_t * data, size_t data_len, Ip to_ip, uint32_t to_port)
 {
-	return false;
+	return m_udp_async_api->audp_sendTo(sid, send_id, data, data_len, to_ip, to_port);
 }
 
 void SocketApi::stopDnsResolver()
