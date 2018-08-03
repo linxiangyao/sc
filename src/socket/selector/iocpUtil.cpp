@@ -1,6 +1,7 @@
 #include "iocpUtil.h"
 #include "../util/socketUtil.h"
 S_NAMESPACE_BEGIN
+#ifdef S_OS_WIN
 
 
 
@@ -457,4 +458,5 @@ void IocpUtil::IocpTranRun::__postRecvFromOkMsg(MyOverlap * overlap, uint32_t nu
 
 
 
+#endif
 S_NAMESPACE_END

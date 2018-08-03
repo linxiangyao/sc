@@ -3,10 +3,10 @@
 #include "../base/iSocketApi.h"
 #include "socketSelector.h"
 S_NAMESPACE_BEGIN
+#ifdef S_OS_WIN
 
 
 
-// IocpUtil -------------------------------------------------------------
 
 class IocpUtil
 {
@@ -14,7 +14,6 @@ private:
 	struct MyOverlap;
 
 public:
-
 	static uint64_t genCmdId();
 	static HANDLE createCompletionPort(DWORD dwNumberOfConcurrentThreads);
 	static BOOL associateDeviceWithCompletionPort(HANDLE hCompletionPort, HANDLE hDevice, DWORD dwCompletionKey);
@@ -102,5 +101,6 @@ private:
 
 
 
+#endif
 S_NAMESPACE_END
 #endif
