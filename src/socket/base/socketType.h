@@ -71,7 +71,7 @@ enum EIpType
 class Ip
 {
 public:
-	Ip() { m_type = EIpType_none; }
+	Ip() { m_type = EIpType_none; memset(&m_value, 0, sizeof(m_value)); }
 	Ip(in_addr v4) { m_type = EIpType_v4; __cpV4(&m_value.m_v4, &v4); }
 	Ip(in6_addr v6) { m_type = EIpType_v6; __cpV6(&m_value.m_v6, &v6); }
 	Ip(const Ip& ip) { __cpIp(ip); }

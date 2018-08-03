@@ -27,10 +27,11 @@ socket_t SocketUtil::openSocket(ESocketType socket_type)
 {
 	if (socket_type == ESocketType_tcp)
 		return socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	else if (socket_type == ESocketType_udp)
+		return socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	else
 		return INVALID_SOCKET;
 }
-
 
 bool SocketUtil::bindAndListen(socket_t s, const std::string& svr_ip, int svr_port)
 {
@@ -313,7 +314,7 @@ bool SocketUtil::sendTo(socket_t s, const byte_t * data, size_t data_len, Ip to_
 bool SocketUtil::recvFrom(socket_t s, byte_t* buf, size_t buf_len, Ip* from_ip, uint32_t* from_port, size_t* real_recv_len)
 {
 	sockaddr_storage addr;
-	uint32_t addr_len = 0;
+	uint32_t addr_len = sizeof(addr);
 	if (!__recvFrom(s, buf, buf_len, &addr, &addr_len, real_recv_len))
 		return false;
 	if (!SocketUtil::sockaddrToIpAndPort((sockaddr*)&addr, addr_len, from_ip, from_port))

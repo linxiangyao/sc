@@ -218,6 +218,11 @@ void SocketApi::udp_close(socket_id_t sid)
 	m_udp_sync_api->udp_close(sid);
 }
 
+bool SocketApi::udp_bind(socket_id_t sid, Ip ip, uint32_t port)
+{
+	return m_udp_sync_api->udp_bind(sid, ip, port);
+}
+
 bool SocketApi::udp_sendTo(socket_id_t sid, const byte_t* data, size_t data_len, Ip to_ip, uint32_t to_port) 
 {
 	return m_udp_sync_api->udp_sendTo(sid, data, data_len, to_ip, to_port);

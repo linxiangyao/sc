@@ -32,6 +32,19 @@ void UdpSyncApi::udp_close(socket_id_t sid)
 	SocketUtil::closeSocket(s);
 }
 
+bool UdpSyncApi::udp_bind(socket_id_t sid, Ip ip, uint32_t port)
+{
+	if (sid <= 0)
+		return false;
+
+	ScopeMutex __l(m_mutex);
+	auto it = m_sid_2_socket.find(sid);
+	if (it == m_sid_2_socket.end())
+		return false;
+
+	return SocketUtil::bind(it->second, ip ,port);
+}
+
 bool UdpSyncApi::udp_sendTo(socket_id_t sid, const byte_t * data, size_t data_len, Ip to_ip, uint32_t to_port)
 {
 	if (sid == 0 || data == NULL || data_len == 0)
