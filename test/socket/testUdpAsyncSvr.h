@@ -11,8 +11,6 @@ USING_NAMESPACE_S
 
 class __TestUdpAsyncSvrLogic : public IConsoleAppLogic
 {
-public:
-
 private:
 	virtual void onAppStartMsg(IConsoleAppApi * api)
 	{
@@ -57,6 +55,7 @@ private:
 		printf("svr:: exiting...\n");
 		delete m_sapi;
 		releaseSocketLib();
+		delete_and_erase_collection_elements(&m_tran_ctxs);
 		printf("svr:: exit\n");
 	}
 

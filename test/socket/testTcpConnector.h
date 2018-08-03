@@ -30,23 +30,6 @@ private:
 		}
 	}
 
-	bool __connect(Ip svr_ip, uint32_t svr_port)
-	{
-		socket_t s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-		if (s == INVALID_SOCKET)
-		{
-			slog_e("startClientSocket fail to create socket, s=%0", s);
-			return false;
-		}
-
-		m_sockets.push_back(s);
-
-		if (!m_connector->startToConnectTcpSocket(s, svr_ip, svr_port))
-			return false;
-
-		return true;
-	}
-
 	virtual void onAppStopMsg() override
 	{
 		slog_i("onAppStopMsg begin");
@@ -68,11 +51,27 @@ private:
 		}
 	}
 
+	bool __connect(Ip svr_ip, uint32_t svr_port)
+	{
+		socket_t s = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		if (s == INVALID_SOCKET)
+		{
+			slog_e("startClientSocket fail to create socket, s=%0", s);
+			return false;
+		}
+
+		m_sockets.push_back(s);
+
+		if (!m_connector->startToConnectTcpSocket(s, svr_ip, svr_port))
+			return false;
+
+		return true;
+	}
+
 
 
 	TcpConnector* m_connector;
 	IConsoleAppApi* m_api;
-
 	std::vector<socket_t> m_sockets;
 };
 

@@ -56,6 +56,7 @@ private:
 		printf("svr:: exiting...\n");
 		delete m_sapi;
 		releaseSocketLib();
+		delete_and_erase_collection_elements(&m_tran_ctxs);
 		printf("svr:: exit\n");
 	}
 

@@ -58,7 +58,6 @@ private:
 		}
 	}
 
-
 	void __run_testSend()
 	{
 		while (!m_is_exit)
