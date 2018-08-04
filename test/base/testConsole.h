@@ -1,7 +1,6 @@
 #ifndef __TEST_CONSOLE
 #define __TEST_CONSOLE
-
-#include "../../src/console/consoleApp.h"
+#include "../comm.h"
 using namespace std;
 USING_NAMESPACE_S
 

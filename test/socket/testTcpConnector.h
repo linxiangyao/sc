@@ -1,7 +1,6 @@
 #ifndef TEST_TCP_CONNECTOR_H
 #define TEST_TCP_CONNECTOR_H
 #include "../comm.h"
-#include "../../src/socket/socketLib.h"
 using namespace std;
 USING_NAMESPACE_S
 

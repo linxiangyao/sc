@@ -1,8 +1,6 @@
 #ifndef TEST_TCP_SYNC_SVR_H
 #define TEST_TCP_SYNC_SVR_H
 #include "../comm.h"
-#include "../../src/socket/socketLib.h"
-#include "../../src/util/utilLib.h"
 using namespace std;
 USING_NAMESPACE_S
 

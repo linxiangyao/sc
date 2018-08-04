@@ -1,7 +1,6 @@
 #ifndef TEST_DNS_RESOLVER_H
 #define TEST_DNS_RESOLVER_H
 #include "../comm.h"
-#include "../../src/socket/socketLib.h"
 using namespace std;
 USING_NAMESPACE_S
 

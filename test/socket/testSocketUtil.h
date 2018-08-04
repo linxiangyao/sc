@@ -1,7 +1,6 @@
 #ifndef TESTSOCKET_H
 #define TESTSOCKET_H
 #include "../comm.h"
-#include "../../src/socket/socketLib.h"
 using namespace std;
 USING_NAMESPACE_S
 

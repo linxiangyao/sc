@@ -1,8 +1,6 @@
 #ifndef __TEST_STRING_UTIL_H
 #define __TEST_STRING_UTIL_H
-#include <iostream>
-#include "../../src/util/stringUtil.h"
-#include "../../src/util/fileUtil.h"
+#include "../comm.h"
 using namespace std;
 USING_NAMESPACE_S
 

@@ -1,9 +1,6 @@
 #ifndef __TEST_LOG
 #define __TEST_LOG
-
-#include "../../src/log/log.h"
-#include "../../src/log/consoleAppender.h"
-#include "../../src/log/fileAppender.h"
+#include "../comm.h"
 using namespace std;
 USING_NAMESPACE_S
 

@@ -1,9 +1,6 @@
 #ifndef TEST_UDP_ASYNC_CLIENT_H
 #define TEST_UDP_ASYNC_CLIENT_H
 #include "../comm.h"
-#include "../../src/socket/socketLib.h"
-#include "../../src/thread/threadLib.h"
-#include "../../src/console/consoleApp.h"
 using namespace std;
 USING_NAMESPACE_S
 
