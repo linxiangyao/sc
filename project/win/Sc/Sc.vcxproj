@@ -70,7 +70,6 @@
     <ClInclude Include="..\..\..\src\socket\dns\dnsResolver.h" />
     <ClInclude Include="..\..\..\src\socket\selector\iocpUtil.h" />
     <ClInclude Include="..\..\..\src\socket\selector\socketSelector.h" />
-    <ClInclude Include="..\..\..\src\socket\socketLib.h" />
     <ClInclude Include="..\..\..\src\socket\tcp\helper\tcpConnector.h" />
     <ClInclude Include="..\..\..\src\socket\tcp\tcpAsyncClientApi.h" />
     <ClInclude Include="..\..\..\src\socket\tcp\tcpAsyncServerApi.h" />
@@ -95,7 +94,7 @@
     <ProjectGuid>{10E7BB5D-6CC5-49BF-AE36-47ABCC40ED86}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>sLibCore</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
     <ProjectName>Sc</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

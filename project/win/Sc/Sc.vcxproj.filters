@@ -1,0 +1,249 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\console\consoleApp.cpp">
+      <Filter>console</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\comm\variant.cpp">
+      <Filter>comm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\log\consoleAppender.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\log\fileAppender.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\log\log.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\log\logComm.cpp">
+      <Filter>log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\thread\thread.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\thread\messageLooper.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\thread\messageLoopThread.cpp">
+      <Filter>thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\util\fileUtil.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\util\stringUtil.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\util\timeUtil.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\socket\api\socketApi.cpp">
+      <Filter>socket\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\socket\dns\dnsResolver.cpp">
+      <Filter>socket\dns</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\socket\selector\socketSelector.cpp">
+      <Filter>socket\selector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\socket\selector\iocpUtil.cpp">
+      <Filter>socket\selector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\socket\tcp\tcpAsyncClientApi.cpp">
+      <Filter>socket\tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\socket\tcp\tcpAsyncServerApi.cpp">
+      <Filter>socket\tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\socket\tcp\tcpSyncApi.cpp">
+      <Filter>socket\tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\socket\tcp\helper\tcpConnector.cpp">
+      <Filter>socket\tcp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\socket\udp\udpSyncApi.cpp">
+      <Filter>socket\udp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\socket\udp\udpAsyncApi.cpp">
+      <Filter>socket\udp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\socket\util\socketUtil.cpp">
+      <Filter>socket\util</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\src\console\consoleApp.h">
+      <Filter>console</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\comm\stlComm.h">
+      <Filter>comm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\comm\variant.h">
+      <Filter>comm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\comm\binary.h">
+      <Filter>comm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\comm\comm.h">
+      <Filter>comm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\comm\intType.h">
+      <Filter>comm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\comm\m.h">
+      <Filter>comm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\comm\ns.h">
+      <Filter>comm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\log\consoleAppender.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\log\fileAppender.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\log\log.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\log\logComm.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\log\logMarcro.h">
+      <Filter>log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\thread\thread.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\thread\threadComm.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\thread\threadLib.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\thread\messageLooper.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\thread\messageLoopThread.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\thread\messageType.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\util\fileUtil.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\util\stringUtil.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\util\timeUtil.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\util\utilLib.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\util\consoleUtil.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\api\socketApi.h">
+      <Filter>socket\api</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\base\iTcpSyncApi.h">
+      <Filter>socket\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\base\iUdpAsyncApi.h">
+      <Filter>socket\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\base\iUdpSyncApi.h">
+      <Filter>socket\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\base\socketType.h">
+      <Filter>socket\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\base\iDnsResolver.h">
+      <Filter>socket\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\base\iSocketApi.h">
+      <Filter>socket\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\base\iTcpAsyncApi.h">
+      <Filter>socket\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\base\iTcpAsyncClientApi.h">
+      <Filter>socket\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\base\iTcpAsyncServerApi.h">
+      <Filter>socket\base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\dns\dnsResolver.h">
+      <Filter>socket\dns</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\selector\socketSelector.h">
+      <Filter>socket\selector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\selector\iocpUtil.h">
+      <Filter>socket\selector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\tcp\tcpAsyncClientApi.h">
+      <Filter>socket\tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\tcp\tcpAsyncServerApi.h">
+      <Filter>socket\tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\tcp\tcpSyncApi.h">
+      <Filter>socket\tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\tcp\helper\tcpConnector.h">
+      <Filter>socket\tcp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\udp\udpAsyncApi.h">
+      <Filter>socket\udp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\udp\udpSyncApi.h">
+      <Filter>socket\udp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\util\socketUtil.h">
+      <Filter>socket\util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="comm">
+      <UniqueIdentifier>{5afac8e4-c225-44e9-ae7b-7d7132eaf4a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="console">
+      <UniqueIdentifier>{e331b715-bb4d-4e03-80d2-40332eed20d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="log">
+      <UniqueIdentifier>{6334f166-ef0a-4f1f-b497-cc0d2dfa29c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="socket">
+      <UniqueIdentifier>{2a505fbf-5175-450a-8ed5-1021f799f7bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="thread">
+      <UniqueIdentifier>{28e14875-26b0-4874-b5c9-599f838d3d95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{6ac66bad-598c-447c-bf53-f76a0d08af8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="socket\api">
+      <UniqueIdentifier>{091afb41-bc90-47da-b81f-04d9629ba3ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="socket\base">
+      <UniqueIdentifier>{1147a484-a0f3-4067-b18c-a52d1f24ccc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="socket\dns">
+      <UniqueIdentifier>{af7a5643-069e-4a55-a3e6-d7979fdffed0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="socket\selector">
+      <UniqueIdentifier>{53aaca56-ed70-40f5-bb28-df62c6462fd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="socket\tcp">
+      <UniqueIdentifier>{93c01882-7e3c-43ec-8953-42d689fcaa38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="socket\udp">
+      <UniqueIdentifier>{d25fbc1e-5a09-4ba6-9a01-c792b67fd261}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="socket\util">
+      <UniqueIdentifier>{ef643739-b0a8-402a-b7de-af067125fc02}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
