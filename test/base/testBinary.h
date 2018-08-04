@@ -1,7 +1,6 @@
 #ifndef __TEST_BINARY_H
 #define __TEST_BINARY_H
-#include "../src/comm/comm.h"
-#include "../src/util/timeUtil.h"
+#include "../comm.h"
 using namespace std;
 USING_NAMESPACE_S
 

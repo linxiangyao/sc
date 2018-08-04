@@ -1,12 +1,12 @@
-testall: testslib
+testall: testsc
 
-testslib: slib
-	g++ ../../test/testSLibCore.cpp \
-		-std=c++11 -L. -lslibcore -lpthread -ggdb -ldl -o testslib
+testsc: sc
+	g++ ../../test/testSc.cpp \
+		-std=c++11 -L. -lsc -lpthread -ggdb -ldl -o testsc
         
-slib:
-	g++ ../../src/slibCore.cpp -c -std=c++11 -o slibcorecpp.o
-	ar crv libslibcore.a slibcorecpp.o
+sc:
+	g++ ../../src/sc.cpp -c -std=c++11 -o sc.o
+	ar crv libsc.a sc.o
 
 clean:
 	rm -f *.a

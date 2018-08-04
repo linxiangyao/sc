@@ -1,4 +1,4 @@
-#include "TcpSyncApi.h"
+#include "tcpSyncApi.h"
 #include "../util/socketUtil.h"
 S_NAMESPACE_BEGIN
 

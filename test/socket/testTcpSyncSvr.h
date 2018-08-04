@@ -74,7 +74,7 @@ private:
 		m_already_print_recv_block_count = 0;
 		while (true)
 		{
-			Sleep(1* 1000);
+			Thread::sleep(1* 1000);
 
 			size_t recv_len = 0;
 			if (!m_sapi->tcp_recv(m_tran_sid, m_buf, __TestSocketBlockSvrSpeedRun_recvBufLen, &recv_len))

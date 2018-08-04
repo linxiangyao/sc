@@ -1,4 +1,4 @@
-#include "slibCore.h"
+#include "sc.h"
 #include "comm/variant.cpp"
 #include "util/stringUtil.cpp"
 #include "util/fileUtil.cpp"
@@ -12,10 +12,15 @@
 #include "thread/messageLoopThread.cpp"
 #include "console/consoleApp.cpp"
 
-#include "socket/socketApi.cpp"
-#include "socket/dnsResolver.cpp"
-#include "socket/socketUtil.cpp"
-#include "socket/linux/socketApi_linux.cpp"
-
+#include "socket/api/socketApi.cpp"
+#include "socket/dns/dnsResolver.cpp"
+#include "socket/util/socketUtil.cpp"
+#include "socket/udp/udpAsyncApi.cpp"
+#include "socket/udp/udpSyncApi.cpp"
+#include "socket/tcp/tcpAsyncClientApi.cpp"
+#include "socket/tcp/tcpAsyncServerApi.cpp"
+#include "socket/tcp/tcpSyncApi.cpp"
+#include "socket/tcp/helper/tcpConnector.cpp"
+#include "socket/selector/socketSelector.cpp"
 
 

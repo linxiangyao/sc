@@ -646,7 +646,7 @@ bool SocketUtil::__recvFrom(socket_t s, byte_t* buf, size_t buf_len, sockaddr_st
 		return true;
 	}
 #else
-	ssize_t ret = ::recvfrom(s, (char*)buf, (int)buf_len, 0, (sockaddr*)addr, (int*)addr_len);
+	ssize_t ret = ::recvfrom(s, (char*)buf, (int)buf_len, 0, (sockaddr*)addr, (socklen_t*)addr_len);
 
 	if (ret < 0)
 	{

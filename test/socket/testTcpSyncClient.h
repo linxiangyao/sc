@@ -67,7 +67,7 @@ private:
 	{
 		while (!m_is_exit)
 		{
-			Sleep(100 * 1);
+			Thread::sleep(100 * 1);
 		}
 	}
 
@@ -89,8 +89,8 @@ private:
 	{
 		while (!m_is_exit)
 		{
-		Sleep(100);
-		Sleep(2 * 1000);		
+		Thread::sleep(100);
+		Thread::sleep(2 * 1000);		
 		printf("send hello\n");
 		if (!__sendPackToSvr("hello, i am client, how are you?"))
 			return;
