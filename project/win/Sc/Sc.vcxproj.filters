@@ -58,9 +58,6 @@
     <ClCompile Include="..\..\..\src\socket\tcp\tcpSyncApi.cpp">
       <Filter>socket\tcp</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\socket\tcp\helper\tcpConnector.cpp">
-      <Filter>socket\tcp</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\socket\udp\udpSyncApi.cpp">
       <Filter>socket\udp</Filter>
     </ClCompile>
@@ -69,6 +66,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\socket\util\socketUtil.cpp">
       <Filter>socket\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\socket\tcp\helper\tcpConnector.cpp">
+      <Filter>socket\tcp\helper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -192,9 +192,6 @@
     <ClInclude Include="..\..\..\src\socket\tcp\tcpSyncApi.h">
       <Filter>socket\tcp</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\src\socket\tcp\helper\tcpConnector.h">
-      <Filter>socket\tcp</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\src\socket\udp\udpAsyncApi.h">
       <Filter>socket\udp</Filter>
     </ClInclude>
@@ -203,6 +200,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\socket\util\socketUtil.h">
       <Filter>socket\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\tcp\helper\tcpConnector.h">
+      <Filter>socket\tcp\helper</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -244,6 +244,9 @@
     </Filter>
     <Filter Include="socket\util">
       <UniqueIdentifier>{ef643739-b0a8-402a-b7de-af067125fc02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="socket\tcp\helper">
+      <UniqueIdentifier>{cbfd37b4-3c4a-45f6-8c1f-9d20d7e10676}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
