@@ -4,7 +4,13 @@
 S_NAMESPACE_BEGIN
 
 
-
+#ifdef S_OS_WIN
+#define S_SELECTOR_IOCP
+#elif defined(S_OS_LINUX)
+#define S_SELECTOR_EPOLL
+#elif defined(S_OS_MAC)
+#define S_SELECTOR_KQUEUE
+#endif
 
 
 class SocketSelector
@@ -107,16 +113,15 @@ private:
 	bool __addTranSocket(socket_t socket, uint64_t connection_id, bool is_tcp);
 	bool __addAccpetSocket(socket_t socket, uint64_t connection_id);
 
-	MessageLooper* m_work_looper; 
+	MessageLooper* m_work_looper;
 	MessageLooperNotifyParam m_notify_param;
 	Mutex m_mutex;
 	bool m_is_exit;
 	std::map<socket_t, Thread*> m_listen_threads;
 	std::vector<Thread*> m_tran_threads;
 	std::map<socket_t, __SocketCtx*> m_tran_sockets;
-#ifdef S_OS_WIN
+#if defined(S_SELECTOR_IOCP)
 	HANDLE m_completionPort;
-#else
 #endif // S_OS_WIN
 };
 

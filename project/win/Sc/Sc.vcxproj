@@ -27,6 +27,7 @@
     <ClCompile Include="..\..\..\src\log\logComm.cpp" />
     <ClCompile Include="..\..\..\src\socket\api\socketApi.cpp" />
     <ClCompile Include="..\..\..\src\socket\dns\dnsResolver.cpp" />
+    <ClCompile Include="..\..\..\src\socket\selector\epollUtil.cpp" />
     <ClCompile Include="..\..\..\src\socket\selector\iocpUtil.cpp" />
     <ClCompile Include="..\..\..\src\socket\selector\socketSelector.cpp" />
     <ClCompile Include="..\..\..\src\socket\tcp\helper\tcpConnector.cpp" />
@@ -68,6 +69,7 @@
     <ClInclude Include="..\..\..\src\socket\base\iUdpSyncApi.h" />
     <ClInclude Include="..\..\..\src\socket\base\socketType.h" />
     <ClInclude Include="..\..\..\src\socket\dns\dnsResolver.h" />
+    <ClInclude Include="..\..\..\src\socket\selector\epollUtil.h" />
     <ClInclude Include="..\..\..\src\socket\selector\iocpUtil.h" />
     <ClInclude Include="..\..\..\src\socket\selector\socketSelector.h" />
     <ClInclude Include="..\..\..\src\socket\tcp\helper\tcpConnector.h" />

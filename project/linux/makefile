@@ -1,8 +1,17 @@
-testall: testsc
+testall: testsc testscclient testscsvr
 
 testsc: sc
 	g++ ../../test/testSc.cpp \
 		-std=c++11 -L. -lsc -lpthread -ggdb -ldl -o testsc
+
+testscclient: sc
+	g++ ../../test/testScClient.cpp \
+                -std=c++11 -L. -lsc -lpthread -ggdb -ldl -o testscclient
+
+testscsvr: sc
+	g++ ../../test/testScServer.cpp \
+                -std=c++11 -L. -lsc -lpthread -ggdb -ldl -o testscsvr
+
         
 sc:
 	g++ ../../src/sc.cpp -c -std=c++11 -o sc.o

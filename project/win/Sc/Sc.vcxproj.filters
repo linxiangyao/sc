@@ -70,6 +70,9 @@
     <ClCompile Include="..\..\..\src\socket\tcp\helper\tcpConnector.cpp">
       <Filter>socket\tcp\helper</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\src\socket\selector\epollUtil.cpp">
+      <Filter>socket\selector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\src\console\consoleApp.h">
@@ -203,6 +206,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\src\socket\tcp\helper\tcpConnector.h">
       <Filter>socket\tcp\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\src\socket\selector\epollUtil.h">
+      <Filter>socket\selector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,6 @@
 #include "socketSelector.h"
 #include "../util/socketUtil.h"
+#include "epollUtil.h"
 #include "iocpUtil.h"
 S_NAMESPACE_BEGIN
 
@@ -9,6 +10,10 @@ SocketSelector::SocketSelector()
 {
 	slog_d("SocketSelector:: new=%0", (uint64_t)this);
 	m_work_looper = nullptr;
+	m_is_exit = false;
+#ifdef S_SELECTOR_IOCP
+	m_completionPort = INVALID_HANDLE_VALUE;
+#endif
 }
 
 SocketSelector::~SocketSelector()
@@ -32,7 +37,7 @@ bool SocketSelector::start()
 	ScopeMutex __l(m_mutex);
 	slog_d("SocketSelector:: start");
 
-#ifdef S_OS_WIN
+#if defined(S_SELECTOR_IOCP)
 	SYSTEM_INFO si;
 	GetSystemInfo(&si);
 
@@ -48,7 +53,14 @@ bool SocketSelector::start()
 		}
 		m_tran_threads.push_back(t);
 	}
-#else
+#elif defined(S_SELECTOR_EPOLL)
+	Thread* t = new Thread(new EpollUtil::EpollRun());
+	if (!t->start())
+	{
+		slog_d("SocketSelector:: start fail to t->start"); //TODO: release resource
+		return false;
+	}
+	m_tran_threads.push_back(t);
 #endif
 
 	return true;
@@ -69,6 +81,11 @@ void SocketSelector::stop()
 	delete_and_erase_collection_elements(&m_tran_sockets);
 	delete_and_erase_collection_elements(&m_tran_threads);
 	delete_and_erase_collection_elements(&m_listen_threads);
+
+#if defined(S_SELECTOR_IOCP)
+	CloseHandle(m_completionPort);
+#elif defined(S_SELECTOR_SELECT)
+#endif
 }
 
 bool SocketSelector::addTcpSocket(socket_t socket, ETcpSocketType socket_type, uint64_t session_id)
@@ -107,19 +124,30 @@ void SocketSelector::removeSocket(socket_t socket, uint64_t session_id)
 
 bool SocketSelector::postSendCmd(socket_t socket, uint64_t session_id, uint64_t send_cmd_id, const byte_t* data, size_t data_len)
 {
-#ifdef S_OS_WIN
+#ifdef S_SELECTOR_IOCP
 	return IocpUtil::postSendCmd(socket, session_id, send_cmd_id, data, data_len);
+
+#elif defined(S_SELECTOR_EPOLL)
+	EpollUtil::EpollRun* run = (EpollUtil::EpollRun*)m_tran_threads[0]->getRun();
+	return run->postSendCmd(socket, session_id, send_cmd_id, data, data_len);
+
 #else
-	return true;
+	return false;
 #endif
+
 }
 
 bool SocketSelector::postSendToCmd(socket_t socket, uint64_t session_id, uint64_t send_cmd_id, Ip to_ip, uint32_t to_port, const byte_t * data, size_t data_len)
 {
-#ifdef S_OS_WIN
+#ifdef S_SELECTOR_IOCP
 	return IocpUtil::postSendToCmd(socket, session_id, send_cmd_id, to_ip, to_port, data, data_len);
+
+#elif defined(S_SELECTOR_EPOLL)
+	EpollUtil::EpollRun* run = (EpollUtil::EpollRun*)m_tran_threads[0]->getRun();
+	return run->postSendToCmd(socket, session_id, send_cmd_id, to_ip, to_port, data, data_len);
+
 #else
-	return true;
+	return false;
 #endif
 }
 
@@ -133,7 +161,7 @@ uint64_t SocketSelector::genSendCmdId()
 
 bool SocketSelector::__addTranSocket(socket_t socket, uint64_t session_id, bool is_tcp)
 {
-#ifdef S_OS_WIN
+#ifdef S_SELECTOR_IOCP
 	if (m_tran_sockets.find(socket) != m_tran_sockets.end())
 		return true;
 
@@ -148,21 +176,34 @@ bool SocketSelector::__addTranSocket(socket_t socket, uint64_t session_id, bool 
 		IocpUtil::postRecvCmd(socket, session_id, IocpUtil::genCmdId());
 	else
 		IocpUtil::postRecvFromCmd(socket, session_id, IocpUtil::genCmdId());
-#else
-#endif
 
 	return true;
+
+#elif defined(S_SELECTOR_EPOLL)
+	EpollUtil::EpollRun* run = (EpollUtil::EpollRun*)m_tran_threads[0]->getRun();
+	return run->addTranSocket(socket, session_id);
+
+#else
+	return false;
+#endif
+
 }
 
 bool SocketSelector::__addAccpetSocket(socket_t socket, uint64_t session_id)
 {
-#ifdef S_OS_WIN
+#ifdef S_SELECTOR_IOCP
 	Thread* listen_thread = new Thread(new IocpUtil::IocpSvrListenRun(m_notify_param, socket));
 	listen_thread->start();
 	m_listen_threads[socket] = listen_thread;
-#else
-#endif
 	return true;
+
+#elif defined(S_SELECTOR_EPOLL)
+	EpollUtil::EpollRun* run = (EpollUtil::EpollRun*)m_tran_threads[0]->getRun();
+	return run->addAcceptSocket(socket, session_id);
+
+#else
+	return false;
+#endif
 }
 
 
