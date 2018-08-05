@@ -23,25 +23,22 @@ public:
             
             if (pipe(m_pipe) != 0)
             {
-                slog_e("fail to pipe");
+                slog_e("EpollRun:: fail to pipe");
                 return;
             }
 
             m_epoll_fd = epoll_create(100 * 1000);
             if(m_epoll_fd == -1)
             {
-                slog_e("fail to epoll_create");
+                slog_e("EpollRun:: fail to epoll_create");
                 return;
             }
 
-            epoll_event ev_pipe;
-            ev_pipe.events = EPOLLIN;
-            ev_pipe.data.fd = m_pipe[0];
-            if (epoll_ctl(m_epoll_fd, EPOLL_CTL_ADD, m_pipe[0], &ev_pipe) == -1)
-            {
-                slog_e("fail to epoll_ctl");
-                return;
-            }
+			if (!__addFdEvent(m_pipe[0], EPOLLIN))
+			{
+				slog_e("EpollRun:: fail to __addFdEvent");
+				return;
+			}
         }
         
         virtual void run() override 
@@ -69,11 +66,17 @@ public:
             ScopeMutex __l(m_mutex);
             if(m_is_exit)
                 return false;
+			
             if(is_map_contain_key(m_ctxs, socket))
                 return false;
             __SocketCtx* ctx = new __SocketCtx(socket, true, session_id);
             m_ctxs[socket] = ctx;
-            
+            if(!__addFdEvent(socket, EPOLLIN))
+			{
+				slog_e("EpollRun:: addAcceptSocket fail to __addFdEvent");
+				return false;
+			}
+			
             __wakeup();
             return true;
         }
@@ -83,14 +86,18 @@ public:
             ScopeMutex __l(m_mutex);
             if(m_is_exit)
                 return false;
+			
             if(is_map_contain_key(m_ctxs, socket))
                 return false;
             __SocketCtx* ctx = new __SocketCtx(socket, false, session_id);
             m_ctxs[socket] = ctx;
+            if(!__addFdEvent(socket, EPOLLIN))
+			{
+				slog_e("EpollRun:: addTranSocket fail to __addFdEvent");
+				return false;
+			}
             
-            
-            
-			slog_i("add");
+			slog_i("EpollRun:: add tran");
             __wakeup();
             return true;
         }
@@ -100,13 +107,22 @@ public:
             ScopeMutex __l(m_mutex);
             if(m_is_exit)
                 return false;
+			
             __SocketCtx* ctx = get_map_element_by_key(m_ctxs, socket);
             if(ctx == nullptr)
                 return false;
             __SendCmd* cmd = new __SendCmd(send_cmd_id, data, data_len);
             ctx->m_send_cmds.push_back(cmd);
-            
-                    slog_i("post send");
+			if(ctx->m_send_cmds.size() == 1)
+			{
+				if(!__modFdEvent(socket, EPOLLIN | EPOLLOUT))
+				{
+					slog_e("EpollRun:: postSendCmd fail to __modFdEvent");
+					return false;
+				}
+			}
+           
+		   slog_i("EpollRun:: post send");
             __wakeup();
             return true;
         }
@@ -116,17 +132,28 @@ public:
             ScopeMutex __l(m_mutex);
             if(m_is_exit)
                 return false;
+			
             __SocketCtx* ctx = get_map_element_by_key(m_ctxs, socket);
             if(ctx == nullptr)
                 return false;
             __SendToCmd* cmd = new __SendToCmd(send_cmd_id, data, data_len, to_ip, to_port);
             ctx->m_send_to_cmds.push_back(cmd);
-              
-                    slog_i("post sendto");
+			if(ctx->m_send_to_cmds.size() == 1)
+			{
+				if(!__modFdEvent(socket, EPOLLIN | EPOLLOUT))
+				{
+					slog_e("EpollRun:: postSendToCmd fail to __modFdEvent");
+					return false;
+				}
+			}
+			
+			slog_i("EpollRun:: post sendto");
             __wakeup();
             return true;
         }
         
+		
+		
     private:
         class __SendCmd
         {
@@ -161,11 +188,7 @@ public:
         };
         
         void __onRun()
-        {
-            {
-                ScopeMutex __l(m_mutex);
-            }
-            
+        {   
             static const int MAX_EVENTS = 10;
             epoll_event evs[MAX_EVENTS];
             while(!m_is_exit)
@@ -173,32 +196,80 @@ public:
                 int event_count = epoll_wait(m_epoll_fd, evs, MAX_EVENTS, -1);
                 if (event_count == -1)
                 {
-                    slog_e("fail to epoll_wait");
+                    slog_e("EpollRun:: onRun fail to epoll_wait");
                     return;
                 }
 
                 ScopeMutex __l(m_mutex);
+				if(m_is_exit)
+					return;
+                m_is_wakeuping = false;
+				
                 for (int i = 0 ; i < event_count; i++) 
                 {
-                    uint32_t events = evs[i].events;
-                }
-                
-                if(m_is_wakeuping)
-                {
-                    m_is_wakeuping = false;
-                    char b;
-                    ::read(m_pipe[0], &b, 1);
-                    slog_i("recv signal");
+					epoll_event& ev = evs[i];
+					
+					if(ev.data.fd == m_pipe[1])
+					{
+						char b;
+						::read(m_pipe[0], &b, 1);
+						slog_i("EpollRun:: onRun recv signal");
+						continue;
+					}
+					
+					__onSocketEvent(&ev);
                 }
             }
         }
+		
+		void __onSocketEvent(epoll_event* ev)
+		{
+			__SocketCtx* ctx = get_map_element_by_key(m_ctxs, ev->data.fd);
+			if(ctx == nullptr)
+			{
+				__delFdEvent(ev.data.fd);
+				return;
+			}
+			
+			if(ctx->m_is_accept_socket)
+			{
+				if(ev->events & EPOLLERR || ev->events & EPOLLHUP)
+				{
+					// release resource and post msg
+					return;
+				}
+				
+				if(ev->events & EPOLLIN)
+				{
+					// accept and post msg
+				}
+			}
+			else
+			{
+				if(ev->events & EPOLLERR || ev->events & EPOLLHUP)
+				{
+					// release resource and post msg
+					return;
+				}
+				
+				if(ev->events & EPOLLIN)
+				{
+					// recv and post msg
+				}
+				
+				if(ev->events & EPOLLOUT)
+				{
+					// send and post msg
+				}
+			}
+		}
         
         void __wakeup()
         {
             if(m_is_wakeuping)
                 return;
             m_is_wakeuping = true;
-            slog_i("__wakeup");
+            slog_i("EpollRun:: __wakeup");
             write(m_pipe[1], "0", 1);		
         }
         
@@ -217,7 +288,38 @@ public:
                 m_epoll_fd = -1;
             }
         }
+		
+		bool __addFdEvent(int fd, int events)
+		{
+            epoll_event ev;
+            ev.data.fd = fd;
+            ev.events = events;
+			if(epoll_ctl(m_epoll_fd, EPOLL_CTL_ADD, fd, &ev) == -1)
+			{
+                slog_e("EpollRun:: __addEventToFd fail to epoll_ctl");
+				return false;
+			}
+			return true;
+		}
+		
+		bool __delFdEvent(int fd)
+		{
+            epoll_event ev;
+            ev.data.fd = fd;
+            ev.events = 0;
+			return epoll_ctl(m_epoll_fd, EPOLL_CTL_DEL, fd, &ev) != -1;
+		}
+		
+		bool __modFdEvent(int fd, int events)
+		{
+            epoll_event ev;
+            ev.data.fd = fd;
+            ev.events = events;
+			return epoll_ctl(m_epoll_fd, EPOLL_CTL_MOD, fd, &ev) != -1;
+		}
         
+		
+		
         bool m_is_exit;
         Mutex m_mutex;
 	    int m_pipe[2];
