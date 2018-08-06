@@ -158,7 +158,7 @@ private:
 void __testUdpAsyncSvr()
 {
 	printf("\n__testUdpAsyncSvr ---------------------------------------------------------\n");
-	__initLog(ELogLevel_info);
+	__initLog(ELogLevel_debug);
 	ConsoleApp* app = new ConsoleApp();
 	__TestUdpAsyncSvrLogic* logic = new __TestUdpAsyncSvrLogic();
 	app->run(logic);

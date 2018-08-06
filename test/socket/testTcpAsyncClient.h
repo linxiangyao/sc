@@ -278,7 +278,7 @@ private:
 void __testTcpAsyncClient()
 {
 	printf("\n__testTcpAsyncClient ---------------------------------------------------------\n");
-	__initLog(ELogLevel_info);
+	__initLog(ELogLevel_debug);
 	ConsoleApp* app = new ConsoleApp();
 	__TestTcpAsyncClientogic* logic = new __TestTcpAsyncClientogic();
 	app->run(logic);

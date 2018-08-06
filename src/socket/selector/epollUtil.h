@@ -2,7 +2,7 @@
 #define S_SOCKET_EPOLLUTIL_H_
 #include "socketSelector.h"
 S_NAMESPACE_BEGIN
-//#define S_OS_LINUX
+#define S_OS_LINUX
 #if  defined(S_OS_LINUX) || defined(S_OS_ANDROID)
 #include <sys/epoll.h>
 
@@ -98,7 +98,7 @@ public:
 			
             if(is_map_contain_key(m_ctxs, session_id))
                 return false;
-            __SocketCtx* ctx = new __SocketCtx(socket, is_tcp ? __ESocketType_tcp_tran: __ESocketType_udp, session_id);
+            __SocketCtx* ctx = new __SocketCtx(socket, is_tcp ? __ESocketType_tcp_tran : __ESocketType_udp, session_id);
             m_ctxs[session_id] = ctx;
             if(!__addFdEvent(socket, EPOLLIN, session_id))
 			{
@@ -106,7 +106,7 @@ public:
 				return false;
 			}
             
-			//slog_i("EpollRun:: add tran");
+			slog_i("EpollRun:: add tran, is_tcp=%0, ctx->socket_type=%1", is_tcp, ctx->m_socket_type);
             __wakeup();
             return true;
         }
@@ -131,7 +131,7 @@ public:
 				}
 			}
            
-		   //slog_v("EpollRun:: post send");
+		   slog_d("EpollRun:: post send");
             __wakeup();
             return true;
         }
@@ -210,7 +210,7 @@ public:
         {
         public:
             __SocketCtx() { m_socket = INVALID_SOCKET; m_session_id = 0; }
-            __SocketCtx(socket_t s, __ESocketType socket_type, uint64_t session_id) { m_socket = s; m_socket_type = m_socket_type; m_session_id = session_id; }
+            __SocketCtx(socket_t s, __ESocketType socket_type, uint64_t session_id) { m_socket = s; m_socket_type = socket_type; m_session_id = session_id; }
             socket_t m_socket;
 			__ESocketType m_socket_type;
             uint64_t m_session_id;
@@ -274,9 +274,13 @@ public:
 			{
 				__onTcpTranSocketEvent(ctx, ev);
 			}
-			else
+			else if (ctx->m_socket_type == __ESocketType_udp)
 			{
 				__onUdpSocketEvent(ctx, ev);
+			}
+			else
+			{
+				slog_d("EpollRun:: unknown socket_type=%0", ctx->m_socket_type);
 			}
 		}
 

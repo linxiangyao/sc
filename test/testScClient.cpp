@@ -43,11 +43,11 @@ int main(int argc, char** argv)
 	//__testTcpAsyncClient();
 	//__testTcpRawClient();
 	//__testTcpSyncClient();
-	//__testTcpAsyncClient();
+	__testTcpAsyncClient();
 	//__testIocpClient();
 	//__testTcpSyncSvr();
 	//__testUdpSyncClient();
-	__testUdpAsyncClient();
+	//__testUdpAsyncClient();
 
 
 

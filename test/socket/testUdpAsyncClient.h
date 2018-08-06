@@ -164,7 +164,7 @@ private:
 void __testUdpAsyncClient()
 {
 	printf("\n__testTcpAsyncClient ---------------------------------------------------------\n");
-	__initLog(ELogLevel_info);
+	__initLog(ELogLevel_debug);
 	ConsoleApp* app = new ConsoleApp();
 	__TestUdpAsyncClientLogic* logic = new __TestUdpAsyncClientLogic();
 	app->run(logic);

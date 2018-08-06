@@ -188,6 +188,7 @@ bool SocketSelector::__addTranSocket(socket_t socket, uint64_t session_id, bool 
 	return true;
 
 #elif defined(S_SELECTOR_EPOLL)
+	slog_d("SocketSelector:: __addTranSocket socket=%0, session_id=%1, is_tp=%2", socket, session_id, is_tcp);
 	EpollUtil::EpollRun* run = (EpollUtil::EpollRun*)m_tran_threads[0]->getRun();
 	return run->addTranSocket(socket, session_id, is_tcp);
 

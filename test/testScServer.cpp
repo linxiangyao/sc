@@ -42,10 +42,10 @@ int main(int argc, char** argv)
 	//__testDnsResolver();
 	//__testTcpConnector();
 	//__testTcpSyncClient();
-	//__testTcpSyncSvr();
+	__testTcpSyncSvr();
 	//__testIocpSvr();
 	//__testUdpSyncSvr();
-	__testUdpAsyncSvr();
+	//__testUdpAsyncSvr();
 
 
 
