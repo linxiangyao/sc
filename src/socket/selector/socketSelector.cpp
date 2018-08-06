@@ -54,7 +54,7 @@ bool SocketSelector::start()
 		m_tran_threads.push_back(t);
 	}
 #elif defined(S_SELECTOR_EPOLL)
-	Thread* t = new Thread(new EpollUtil::EpollRun());
+	Thread* t = new Thread(new EpollUtil::EpollRun(m_notify_param));
 	if (!t->start())
 	{
 		slog_d("SocketSelector:: start fail to t->start"); //TODO: release resource

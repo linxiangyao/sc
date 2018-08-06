@@ -14,8 +14,9 @@ public:
     class EpollRun : public IThreadRun
     {
     public:
-        EpollRun()
+		EpollRun(const MessageLooperNotifyParam& notify_param)
         {
+			m_notify_param = notify_param;
             m_is_exit = false;
             m_is_wakeuping = false;
             m_pipe[0] = 0;
@@ -26,6 +27,7 @@ public:
                 slog_e("EpollRun:: fail to pipe");
                 return;
             }
+			m_pipe_selector_session_id = SocketSelector::genSessionId();
 
             m_epoll_fd = epoll_create(100 * 1000);
             if(m_epoll_fd == -1)
@@ -34,7 +36,7 @@ public:
                 return;
             }
 
-			if (!__addFdEvent(m_pipe[0], EPOLLIN))
+			if (!__addFdEvent(m_pipe[0], EPOLLIN, m_pipe_selector_session_id))
 			{
 				slog_e("EpollRun:: fail to __addFdEvent");
 				return;
@@ -70,8 +72,8 @@ public:
             if(is_map_contain_key(m_ctxs, socket))
                 return false;
             __SocketCtx* ctx = new __SocketCtx(socket, true, session_id);
-            m_ctxs[socket] = ctx;
-            if(!__addFdEvent(socket, EPOLLIN))
+            m_ctxs[session_id] = ctx;
+            if(!__addFdEvent(socket, EPOLLIN, session_id))
 			{
 				slog_e("EpollRun:: addAcceptSocket fail to __addFdEvent");
 				return false;
@@ -90,8 +92,8 @@ public:
             if(is_map_contain_key(m_ctxs, socket))
                 return false;
             __SocketCtx* ctx = new __SocketCtx(socket, false, session_id);
-            m_ctxs[socket] = ctx;
-            if(!__addFdEvent(socket, EPOLLIN))
+            m_ctxs[session_id] = ctx;
+            if(!__addFdEvent(socket, EPOLLIN, session_id))
 			{
 				slog_e("EpollRun:: addTranSocket fail to __addFdEvent");
 				return false;
@@ -108,14 +110,14 @@ public:
             if(m_is_exit)
                 return false;
 			
-            __SocketCtx* ctx = get_map_element_by_key(m_ctxs, socket);
+            __SocketCtx* ctx = get_map_element_by_key(m_ctxs, session_id);
             if(ctx == nullptr)
                 return false;
             __SendCmd* cmd = new __SendCmd(send_cmd_id, data, data_len);
             ctx->m_send_cmds.push_back(cmd);
 			if(ctx->m_send_cmds.size() == 1)
 			{
-				if(!__modFdEvent(socket, EPOLLIN | EPOLLOUT))
+				if(!__modFdEvent(socket, EPOLLIN | EPOLLOUT, ctx->m_session_id))
 				{
 					slog_e("EpollRun:: postSendCmd fail to __modFdEvent");
 					return false;
@@ -133,14 +135,14 @@ public:
             if(m_is_exit)
                 return false;
 			
-            __SocketCtx* ctx = get_map_element_by_key(m_ctxs, socket);
+            __SocketCtx* ctx = get_map_element_by_key(m_ctxs, session_id);
             if(ctx == nullptr)
                 return false;
             __SendToCmd* cmd = new __SendToCmd(send_cmd_id, data, data_len, to_ip, to_port);
             ctx->m_send_to_cmds.push_back(cmd);
 			if(ctx->m_send_to_cmds.size() == 1)
 			{
-				if(!__modFdEvent(socket, EPOLLIN | EPOLLOUT))
+				if(!__modFdEvent(socket, EPOLLIN | EPOLLOUT, ctx->m_session_id))
 				{
 					slog_e("EpollRun:: postSendToCmd fail to __modFdEvent");
 					return false;
@@ -152,8 +154,22 @@ public:
             return true;
         }
         
+		void removeSocket(socket_t socket, uint64_t session_id)
+		{
+			ScopeMutex __l(m_mutex);
+			if (m_is_exit)
+				return;
+
+			__SocketCtx* ctx = get_map_element_by_key(m_ctxs, session_id);
+			if (ctx == nullptr)
+				return;
+			__releaseCtx(ctx);
+		}
 		
-		
+
+
+
+
     private:
         class __SendCmd
         {
@@ -224,42 +240,81 @@ public:
 		
 		void __onSocketEvent(epoll_event* ev)
 		{
-			__SocketCtx* ctx = get_map_element_by_key(m_ctxs, ev->data.fd);
+			__SocketCtx* ctx = get_map_element_by_key(m_ctxs, ev->data.u64);
 			if(ctx == nullptr)
 			{
-				__delFdEvent(ev.data.fd);
+				__delFdEvent(ev->data.fd);
 				return;
 			}
-			
+
 			if(ctx->m_is_accept_socket)
 			{
+				// err: release resource and post msg
 				if(ev->events & EPOLLERR || ev->events & EPOLLHUP)
 				{
-					// release resource and post msg
+					__postMsg_SocketClosed(ctx);
+					__releaseCtx(ctx);
 					return;
 				}
 				
+				// ok: accept and post msg
 				if(ev->events & EPOLLIN)
 				{
-					// accept and post msg
+					socket_t tran_socket = INVALID_SOCKET;
+					if (!SocketUtil::accept(ctx->m_socket, &tran_socket))
+					{
+						__postMsg_SocketClosed(ctx);
+						__releaseCtx(ctx);
+						return;
+					}
+
+					__postMsg_AcceptOk(ctx, tran_socket);
+					slog_d("EpollRun:: accept one client, tran_socket=%0", tran_socket);
 				}
 			}
 			else
 			{
 				if(ev->events & EPOLLERR || ev->events & EPOLLHUP)
 				{
-					// release resource and post msg
+					__postMsg_SocketClosed(ctx);
+					__releaseCtx(ctx);
 					return;
 				}
 				
 				if(ev->events & EPOLLIN)
 				{
 					// recv and post msg
+					
 				}
 				
 				if(ev->events & EPOLLOUT)
 				{
 					// send and post msg
+					if (ctx->m_send_cmds.size() > 0)
+					{
+
+					}
+					else if (ctx->m_send_to_cmds.size() > 0)
+					{
+						__SendToCmd* cmd = ctx->m_send_to_cmds[ctx->m_send_to_cmds.size() - 1];
+						size_t real_send = 0;
+						if (!SocketUtil::sendTo(ctx->m_socket, cmd->m_send_data.getData(), cmd->m_send_data.getLen(), cmd->m_to_ip, cmd->m_to_port, &real_send))
+						{
+							__postMsg_SocketClosed(ctx);
+							__releaseCtx(ctx);
+							return;
+						}
+
+						if (real_send = cmd->m_send_data.getLen())
+						{
+							__postMsg_SendToEnd(ctx, cmd, true);
+							delete_and_erase_vector_element_by_index(&ctx->m_send_to_cmds, ctx->m_send_to_cmds.size() - 1);
+						}
+						else
+						{
+							cmd->m_send_data.shrinkBegin(real_send);
+						}
+					}
 				}
 			}
 		}
@@ -289,10 +344,10 @@ public:
             }
         }
 		
-		bool __addFdEvent(int fd, int events)
+		bool __addFdEvent(int fd, int events, uint64_t selector_session_id)
 		{
             epoll_event ev;
-            ev.data.fd = fd;
+            ev.data.u64 = selector_session_id;
             ev.events = events;
 			if(epoll_ctl(m_epoll_fd, EPOLL_CTL_ADD, fd, &ev) == -1)
 			{
@@ -305,27 +360,68 @@ public:
 		bool __delFdEvent(int fd)
 		{
             epoll_event ev;
-            ev.data.fd = fd;
-            ev.events = 0;
 			return epoll_ctl(m_epoll_fd, EPOLL_CTL_DEL, fd, &ev) != -1;
 		}
 		
-		bool __modFdEvent(int fd, int events)
+		bool __modFdEvent(int fd, int events, uint64_t selector_session_id)
 		{
             epoll_event ev;
-            ev.data.fd = fd;
+            ev.data.u64 = selector_session_id;
             ev.events = events;
 			return epoll_ctl(m_epoll_fd, EPOLL_CTL_MOD, fd, &ev) != -1;
 		}
         
+		void __postMsg_SocketClosed(__SocketCtx* ctx)
+        {
+			SocketSelector::Msg_socketClosed * msg = new SocketSelector::Msg_socketClosed();
+			__copyCtxToMsg(ctx, msg);
+			m_notify_param.postMessage(msg);
+        }
+
+		void __postMsg_AcceptOk(__SocketCtx* ctx, socket_t tran_socket)
+		{
+			SocketSelector::Msg_acceptOk* msg = new SocketSelector::Msg_acceptOk();
+			__copyCtxToMsg(ctx, msg);
+			msg->m_tran_socket = tran_socket;
+			m_notify_param.postMessage(msg);
+		}
+
+		void __postMsg_SendToEnd(__SocketCtx* ctx, __SendToCmd* cmd, bool is_ok)
+		{
+			SocketSelector::Msg_sendToEnd* msg = new SocketSelector::Msg_sendToEnd();
+			__copyCtxToMsg(ctx, msg);
+			msg->m_cmd_id = cmd->m_send_cmd_id;
+			msg->m_is_ok = is_ok;
+			m_notify_param.postMessage(msg);
+		}
+
+		void __releaseCtx(__SocketCtx* ctx)
+		{
+			if (ctx == nullptr)
+				return;
+			__delFdEvent(ctx->m_socket);
+			SocketUtil::closeSocket(ctx->m_socket);
+			delete_and_erase_map_element_by_key(&m_ctxs, ctx->m_socket);
+		}
+
+		void __copyCtxToMsg(__SocketCtx* ctx, SocketSelector::SocketSelector::BaseMsg* msg)
+		{
+			msg->m_socket = ctx->m_socket;
+			msg->m_session_id = ctx->m_session_id;
+		}
 		
-		
+
+
+
+
         bool m_is_exit;
         Mutex m_mutex;
 	    int m_pipe[2];
+		uint64_t m_pipe_selector_session_id;
         int m_epoll_fd;
         bool m_is_wakeuping;
-        std::map<socket_t, __SocketCtx*> m_ctxs;
+        std::map<uint64_t, __SocketCtx*> m_ctxs;
+		MessageLooperNotifyParam m_notify_param;
     };
 };
 
