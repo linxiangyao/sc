@@ -124,7 +124,8 @@ bool TcpAsyncServerApi::atcp_startSvrListenSocket(socket_id_t svr_listen_sid)
 		return false;
 	}
 
-	if (!m_selecotr->addTcpSocket(s, ETcpSocketType_svr_listen, ctx->m_sid))
+	ctx->m_selector_session_id = SocketSelector::genSessionId();
+	if (!m_selecotr->addTcpSocket(s, ETcpSocketType_svr_listen, ctx->m_selector_session_id))
 	{
 		slog_e("TcpAsyncServerApi:: atcp_startSvrListenSocket fail to m_selecotr->addTcpSocket, svr_listen_sid=%0", svr_listen_sid);
 		// TODO:
@@ -160,7 +161,7 @@ bool TcpAsyncServerApi::atcp_sendDataFromSvrTranSocketToClient(socket_id_t svr_t
 		return false;
 	}
 
-	m_selecotr->postSendCmd(ctx->m_socket, ctx->m_sid, SocketSelector::genSendCmdId(), data, data_len);
+	m_selecotr->postSendCmd(ctx->m_socket, ctx->m_selector_session_id, SocketSelector::genSendCmdId(), data, data_len);
 	return true;
 }
 
@@ -204,21 +205,19 @@ void TcpAsyncServerApi::__onSvrListenSocketAcceptedMsg(Message * msg)
 	slog_d("TcpAsyncServerApi:: accept one client");
 
 	SocketSelector::Msg_acceptOk* msg_accept = (SocketSelector::Msg_acceptOk*)msg;
-	socket_t svr_listen_socket = msg_accept->m_listen_socket;
-	socket_t svr_tran_socket = msg_accept->m_tran_socket;
-	__SocketCtx* ctx_listen = __getSvrListenCtxBySocket(svr_listen_socket);
+	__SocketCtx* ctx_listen = __getSvrListenCtxBySelectorSessionId(msg_accept->m_session_id);
 	if (ctx_listen == nullptr)
 		return;
 
 	__SocketCtx* ctx_tran = new __SocketCtx();
 	ctx_tran->m_sid = SocketUtil::genSid();
 	ctx_tran->m_socket_type = ETcpSocketType_svr_tran;
-	ctx_tran->m_socket = svr_tran_socket;
+	ctx_tran->m_socket = msg_accept->m_tran_socket;
 	ctx_tran->m_svr_param = ctx_listen->m_svr_param;
 	ctx_tran->m_ref_listen_sid = ctx_listen->m_sid;
 	m_svr_tran_ctx_map[ctx_tran->m_sid] = ctx_tran;
 	
-	m_selecotr->addTcpSocket(svr_tran_socket, ETcpSocketType_svr_tran, ctx_tran->m_sid);
+	m_selecotr->addTcpSocket(msg_accept->m_tran_socket, ETcpSocketType_svr_tran, ctx_tran->m_selector_session_id);
 
 	Msg_TcpSvrListenSocketAccepted* m = new Msg_TcpSvrListenSocketAccepted();
 	m->m_svr_listen_sid = ctx_listen->m_sid;
@@ -232,7 +231,7 @@ void TcpAsyncServerApi::__onSocketClosedMsg(Message * msg)
 {
 	ScopeMutex __l(m_mutex);
 	SocketSelector::Msg_socketClosed* msg_close = (SocketSelector::Msg_socketClosed*)msg;
-	__SocketCtx* ctx_listen = __getSvrListenCtxBySocket(msg_close->m_socket);
+	__SocketCtx* ctx_listen = __getSvrListenCtxBySelectorSessionId(msg_close->m_session_id);
 	if (ctx_listen != nullptr)
 	{
 		Msg_TcpSvrListenSocketStopped* m = new Msg_TcpSvrListenSocketStopped();
@@ -242,7 +241,7 @@ void TcpAsyncServerApi::__onSocketClosedMsg(Message * msg)
 		return;
 	}
 
-	__SocketCtx* ctx_tran = __getSvrTranCtxBySocket(msg_close->m_socket);
+	__SocketCtx* ctx_tran = __getSvrTranCtxBySelectorSessionId(msg_close->m_session_id);
 	if (ctx_tran != nullptr)
 	{
 		Msg_TcpSvrTranSocketStopped* m = new Msg_TcpSvrTranSocketStopped();
@@ -251,7 +250,7 @@ void TcpAsyncServerApi::__onSocketClosedMsg(Message * msg)
 		__postMsgToTarget(m, ctx_tran);
 
 		slog_d("TcpAsyncServerApi:: client closed, svr_tran_sid=%0", ctx_tran->m_sid);
-		m_selecotr->removeSocket(ctx_tran->m_socket, ctx_tran->m_sid);
+		m_selecotr->removeSocket(ctx_tran->m_socket, ctx_tran->m_selector_session_id);
 		__releaseSvrTranSocket(ctx_tran->m_sid); // api release tran ctx when it is closed
 	}
 
@@ -261,8 +260,7 @@ void TcpAsyncServerApi::__onSvrTranSocketRecvDataMsg(Message * msg)
 {
 	ScopeMutex __l(m_mutex);
 	SocketSelector::Msg_RecvOk* msg_recv = (SocketSelector::Msg_RecvOk*)msg;
-	socket_t svr_tran_socket = msg_recv->m_tran_socket;
-	__SocketCtx* ctx_tran = __getSvrTranCtxBySocket(svr_tran_socket);
+	__SocketCtx* ctx_tran = __getSvrTranCtxBySelectorSessionId(msg_recv->m_session_id);
 	if (ctx_tran == nullptr)
 		return;
 
@@ -278,8 +276,7 @@ void TcpAsyncServerApi::__onSvrTranSocketSendDataEndMsg(Message * msg)
 {
 	ScopeMutex __l(m_mutex);
 	SocketSelector::Msg_sendEnd* msg_send_end = (SocketSelector::Msg_sendEnd*)msg;
-	socket_t svr_tran_socket = msg_send_end->m_tran_socket;
-	__SocketCtx* ctx_tran = __getSvrTranCtxBySocket(svr_tran_socket);
+	__SocketCtx* ctx_tran = __getSvrTranCtxBySelectorSessionId(msg_send_end->m_session_id);
 	if (ctx_tran == nullptr)
 		return;
 
@@ -295,7 +292,7 @@ void TcpAsyncServerApi::__stopSvrListenSocket(socket_id_t svr_listen_sid)
 	__SocketCtx* ctx = __getSvrListenCtxById(svr_listen_sid);
 	if (ctx == nullptr || ctx->m_socket == INVALID_SOCKET)
 		return;
-	m_selecotr->removeSocket(ctx->m_socket, ctx->m_sid);
+	m_selecotr->removeSocket(ctx->m_socket, ctx->m_selector_session_id);
 	SocketUtil::closeSocket(ctx->m_socket);
 	ctx->m_socket = INVALID_SOCKET;
 }
@@ -312,7 +309,7 @@ void TcpAsyncServerApi::__stopSvrTranSocket(socket_id_t svr_tran_sid)
 	if (ctx == nullptr || ctx->m_socket == INVALID_SOCKET)
 		return;
 
-	m_selecotr->removeSocket(ctx->m_socket, ctx->m_sid);
+	m_selecotr->removeSocket(ctx->m_socket, ctx->m_selector_session_id);
 	SocketUtil::closeSocket(ctx->m_socket);
 	ctx->m_socket = INVALID_SOCKET;
 }
@@ -323,11 +320,11 @@ void TcpAsyncServerApi::__releaseSvrTranSocket(socket_id_t svr_tran_sid)
 	delete_and_erase_map_element_by_key(&m_svr_tran_ctx_map, svr_tran_sid);
 }
 
-TcpAsyncServerApi::__SocketCtx * TcpAsyncServerApi::__getSvrListenCtxBySocket(socket_t socket)
+TcpAsyncServerApi::__SocketCtx * TcpAsyncServerApi::__getSvrListenCtxBySelectorSessionId(uint64_t selector_session_id)
 {
 	for (auto it = m_svr_listen_ctx_map.begin(); it != m_svr_listen_ctx_map.end(); ++it)
 	{
-		if (it->second->m_socket == socket)
+		if (it->second->m_selector_session_id == selector_session_id)
 			return it->second;
 	}
 	return nullptr; 
@@ -343,11 +340,11 @@ TcpAsyncServerApi::__SocketCtx * TcpAsyncServerApi::__getSvrTranCtxById(socket_i
 	return get_map_element_by_key(m_svr_tran_ctx_map, sid);
 }
 
-TcpAsyncServerApi::__SocketCtx * TcpAsyncServerApi::__getSvrTranCtxBySocket(socket_t socket) 
+TcpAsyncServerApi::__SocketCtx * TcpAsyncServerApi::__getSvrTranCtxBySelectorSessionId(uint64_t selector_session_id)
 {
 	for (auto it = m_svr_tran_ctx_map.begin(); it != m_svr_tran_ctx_map.end(); ++it)
 	{
-		if (it->second->m_socket == socket)
+		if (it->second->m_selector_session_id == selector_session_id)
 			return it->second;
 	}
 	return nullptr;

@@ -29,6 +29,7 @@ private:
 			m_sid = 0;
 			m_ref_listen_sid = 0;
 			m_socket = INVALID_SOCKET;
+			m_selector_session_id = 0;
 		}
 
 
@@ -36,6 +37,7 @@ private:
 		SOCKET m_socket;
 		ETcpSocketType m_socket_type;
 		socket_id_t m_ref_listen_sid; // svr_tran ref to listen_sid
+		uint64_t m_selector_session_id;
 		TcpSvrListenSocketCreateParam m_svr_param;
 	};
 	typedef std::map<socket_id_t, __SocketCtx*> CtxMap;
@@ -54,10 +56,10 @@ private:
 	void __releaseSvrListenSocket(socket_id_t svr_listen_sid);
 	void __stopSvrTranSocket(socket_id_t svr_tran_sid);
 	void __releaseSvrTranSocket(socket_id_t svr_tran_sid);
-	__SocketCtx* __getSvrListenCtxBySocket(socket_t socket);
+	__SocketCtx* __getSvrListenCtxBySelectorSessionId(uint64_t selector_session_id);
 	__SocketCtx* __getSvrListenCtxById(socket_id_t sid);
 	__SocketCtx* __getSvrTranCtxById(socket_id_t sid);
-	__SocketCtx* __getSvrTranCtxBySocket(socket_t socket);
+	__SocketCtx* __getSvrTranCtxBySelectorSessionId(uint64_t selector_session_id);
 	void __postMsgToTarget(Message* msg, __SocketCtx * ctx);
 
 

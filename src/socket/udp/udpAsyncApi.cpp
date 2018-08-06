@@ -70,6 +70,7 @@ bool UdpAsyncApi::audp_createSocket(socket_id_t * sid, const UdpSocketCreatePara
 	ctx->m_sid = SocketUtil::genSid();
 	ctx->m_socket = socket;
 	ctx->m_create_param = param;
+	ctx->m_selector_session_id = SocketSelector::genSessionId();
 	m_ctxs[ctx->m_sid] = ctx;
 
 	if (param.m_is_bind)
@@ -81,7 +82,7 @@ bool UdpAsyncApi::audp_createSocket(socket_id_t * sid, const UdpSocketCreatePara
 		}
 	}
 
-	if (!m_selector->addUdpSocket(ctx->m_socket, ctx->m_sid))
+	if (!m_selector->addUdpSocket(ctx->m_socket, ctx->m_selector_session_id))
 	{
 		__releaseSocket(ctx->m_sid);
 		slog_e("UdpAsyncApi:: audp_createSocket fail to m_selector->addUdpSocket");
@@ -106,7 +107,7 @@ bool UdpAsyncApi::audp_sendTo(socket_id_t sid, uint64_t send_cmd_id, const byte_
 	__SocketCtx* ctx = get_map_element_by_key(m_ctxs, sid);
 	if (ctx == nullptr)
 		return false;
-	if (!m_selector->postSendToCmd(ctx->m_socket, ctx->m_sid, send_cmd_id, to_ip, to_port, data, data_len))
+	if (!m_selector->postSendToCmd(ctx->m_socket, ctx->m_selector_session_id, send_cmd_id, to_ip, to_port, data, data_len))
 		return false;
 	return true;
 }
@@ -132,25 +133,21 @@ void UdpAsyncApi::onMessageTimerTick(uint64_t timer_id, void * user_data)
 
 void UdpAsyncApi::__onMsg_SocketClosed(Message * msg)
 {
-	socket_t socket = (socket_t)msg->m_args.getUint64("tran_socket");
-	socket_id_t sid = msg->m_args.getUint64("session_id");
-	__SocketCtx* ctx = get_map_element_by_key(m_ctxs, sid);
+	SocketSelector::Msg_socketClosed* msg_closed = (SocketSelector::Msg_socketClosed*)msg;
+	__SocketCtx* ctx = __getSocketCtxBySelectorSessionId(msg_closed->m_session_id);
 	if (ctx == nullptr)
 		return;
 
 	Msg_UdpSocketClosed* m = new Msg_UdpSocketClosed();
 	m->m_sid = ctx->m_sid;
 	__postMessageToTarget(m, ctx);
-
-	__releaseSocket(sid);
+	__releaseSocket(ctx->m_sid);
 }
 
 void UdpAsyncApi::__onMsg_SocketRecvData(Message * msg)
 {
 	SocketSelector::Msg_RecvFromOk* msg_recv_from = (SocketSelector::Msg_RecvFromOk*)msg;
-	socket_t socket = msg_recv_from->m_tran_socket;
-	socket_id_t sid = msg_recv_from->m_session_id;
-	__SocketCtx* ctx = get_map_element_by_key(m_ctxs, sid);
+	__SocketCtx* ctx = __getSocketCtxBySelectorSessionId(msg_recv_from->m_session_id);
 	if (ctx == nullptr)
 		return;
 
@@ -165,9 +162,7 @@ void UdpAsyncApi::__onMsg_SocketRecvData(Message * msg)
 void UdpAsyncApi::__onMsg_SocketSendDataEnd(Message * msg)
 {
 	SocketSelector::Msg_sendToEnd* msg_send_to_end = (SocketSelector::Msg_sendToEnd*)msg;
-	socket_t socket = msg_send_to_end->m_tran_socket;
-	socket_id_t sid = msg_send_to_end->m_session_id;
-	__SocketCtx* ctx = get_map_element_by_key(m_ctxs, sid);
+	__SocketCtx* ctx = __getSocketCtxBySelectorSessionId(msg_send_to_end->m_session_id);
 	if (ctx == nullptr)
 		return;
 
@@ -183,16 +178,16 @@ void UdpAsyncApi::__releaseSocket(socket_id_t sid)
 		return;
 
 	SocketUtil::closeSocket(ctx->m_socket);
-	m_selector->removeSocket(ctx->m_socket, ctx->m_sid);
+	m_selector->removeSocket(ctx->m_socket, ctx->m_selector_session_id);
 
 	delete_and_erase_map_element_by_key(&m_ctxs, sid);
 }
 
-UdpAsyncApi::__SocketCtx * UdpAsyncApi::__getSocketCtxBySocket(socket_t socket)
+UdpAsyncApi::__SocketCtx * UdpAsyncApi::__getSocketCtxBySelectorSessionId(uint64_t session_id)
 {
 	for (auto it = m_ctxs.begin(); it != m_ctxs.end(); ++it)
 	{
-		if (it->second->m_socket == socket)
+		if (it->second->m_selector_session_id == session_id)
 			return it->second;
 	}
 	return nullptr;

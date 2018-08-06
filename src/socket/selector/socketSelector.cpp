@@ -159,6 +159,14 @@ uint64_t SocketSelector::genSendCmdId()
 	return ++s_send_cmd_id_seed;
 }
 
+uint64_t SocketSelector::genSessionId()
+{
+	static Mutex m;
+	static uint64_t s_session_id_seed = 0;
+	ScopeMutex __l(m);
+	return ++s_session_id_seed;
+}
+
 bool SocketSelector::__addTranSocket(socket_t socket, uint64_t session_id, bool is_tcp)
 {
 #ifdef S_SELECTOR_IOCP

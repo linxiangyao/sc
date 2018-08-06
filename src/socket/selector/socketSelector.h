@@ -98,6 +98,7 @@ public:
 	bool postSendCmd(socket_t socket, uint64_t session_id, uint64_t send_cmd_id, const byte_t* data, size_t data_len);
 	bool postSendToCmd(socket_t socket, uint64_t session_id, uint64_t send_cmd_id, Ip to_ip, uint32_t to_port, const byte_t* data, size_t data_len);
 	static uint64_t genSendCmdId();
+	static uint64_t genSessionId();
 
 
 

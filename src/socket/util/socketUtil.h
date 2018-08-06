@@ -9,7 +9,7 @@ class SocketUtil
 {
 public:
 	static socket_id_t genSid();
-	static uint64_t genConnectionId();
+	//static uint64_t genConnectionId();
 	static socket_t openSocket(ESocketType socket_type);
 	static bool bindAndListen(socket_t s, const std::string& svr_ip, int svr_port);
 	static bool bind(socket_t s, Ip ip, int svr_prot);

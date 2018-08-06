@@ -14,12 +14,12 @@ socket_id_t SocketUtil::genSid()
 	ScopeMutex __l(s_sid_mutex);
 	return ++m_sid_seed;
 }
-
-uint64_t SocketUtil::genConnectionId()
-{
-	ScopeMutex __l(s_sid_mutex);
-	return ++m_connection_id_seed;
-}
+//
+//uint64_t SocketUtil::genConnectionId()
+//{
+//	ScopeMutex __l(s_sid_mutex);
+//	return ++m_connection_id_seed;
+//}
 
 socket_t SocketUtil::openSocket(ESocketType socket_type)
 {

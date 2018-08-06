@@ -23,12 +23,13 @@ private:
 	class __SocketCtx
 	{
 	public:
-		__SocketCtx() { m_socket = INVALID_SOCKET; m_sid = 0; }
+		__SocketCtx() { m_socket = INVALID_SOCKET; m_sid = 0; m_selector_session_id = 0; }
 		~__SocketCtx() { }
 
 		UdpSocketCreateParam m_create_param;
 		socket_t m_socket;
 		socket_id_t m_sid;
+		uint64_t m_selector_session_id;
 	};
 
 
@@ -38,7 +39,7 @@ private:
 	void __onMsg_SocketRecvData(Message* msg);
 	void __onMsg_SocketSendDataEnd(Message* msg);
 	void __releaseSocket(socket_id_t sid);
-	__SocketCtx* __getSocketCtxBySocket(socket_t socket);
+	__SocketCtx* __getSocketCtxBySelectorSessionId(uint64_t session_id);
 	void __postMessageToTarget(Message* msg, __SocketCtx* ctx);
 
 

@@ -40,8 +40,16 @@ int main(int argc, char** argv)
 	//__testTcpConnector();
 	//__testTcpSyncClient();
 	//__testTcpSyncSvr();
+	__initLog(ELogLevel_info);
 
+	initSocketLib();
 
+	for (int i = 0; i < 100; ++i)
+	{
+		socket_t s = SocketUtil::openSocket(ESocketType_tcp);
+		slog_i("s%0=%1", i, s);
+		SocketUtil::closeSocket(s);
+	}
 
 	printf("test end **************************************************************\n");
 	return 0;

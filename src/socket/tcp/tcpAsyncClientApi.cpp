@@ -124,8 +124,8 @@ bool TcpAsyncClientApi::atcp_startClientSocket(socket_id_t client_sid, uint64_t*
 		return false;
 	}
 	ctx->m_socket = s;
-	*connection_id = SocketUtil::genConnectionId();
-	ctx->m_connection_id = *connection_id;
+	ctx->m_connection_id = SocketSelector::genSessionId();
+	*connection_id = ctx->m_connection_id;
 
 	if (!m_connector->startToConnectTcpSocket(ctx->m_socket, ctx->m_create_param.m_svr_ip, ctx->m_create_param.m_svr_port))
 		return false;
