@@ -225,10 +225,8 @@ void TcpAsyncClientApi::__onMsg_ConnectorConnectEnd(Message * msg)
 void TcpAsyncClientApi::__onMsg_ClientDisconnected(Message * msg)
 {
 	SocketSelector::Msg_socketClosed* msg_disconnect = (SocketSelector::Msg_socketClosed*)msg;
-	socket_t socket = msg_disconnect->m_socket;
-	uint64_t connection_id = msg_disconnect->m_session_id;
-	__SocketCtx* ctx = __getClientCtxBySocket(socket);
-	if (ctx == NULL || connection_id != ctx->m_connection_id)
+	__SocketCtx* ctx = __getClientCtxBySelectorSessionId(msg_disconnect->m_session_id);
+	if (ctx == nullptr)
 		return;
 	if (ctx->m_socket == INVALID_SOCKET)
 		return;
@@ -246,10 +244,8 @@ void TcpAsyncClientApi::__onMsg_ClientDisconnected(Message * msg)
 void TcpAsyncClientApi::__onMsg_ClientRecvData(Message * msg)
 {
 	SocketSelector::Msg_RecvOk* msg_recv_data = (SocketSelector::Msg_RecvOk*)msg;
-	socket_t socket = msg_recv_data->m_socket;
-	uint64_t connection_id = msg_recv_data->m_session_id;
-	__SocketCtx* ctx = __getClientCtxBySocket(socket);
-	if (ctx == NULL || connection_id != ctx->m_connection_id)
+	__SocketCtx* ctx = __getClientCtxBySelectorSessionId(msg_recv_data->m_session_id);
+	if (ctx == nullptr)
 		return;
 
 	Msg_TcpClientSocketRecvData* m = new Msg_TcpClientSocketRecvData();
@@ -262,10 +258,8 @@ void TcpAsyncClientApi::__onMsg_ClientRecvData(Message * msg)
 void TcpAsyncClientApi::__onMsg_ClientSendDataEnd(Message * msg)
 {
 	SocketSelector::Msg_sendEnd* msg_send_data_end = (SocketSelector::Msg_sendEnd*)msg;
-	socket_t socket = msg_send_data_end->m_socket;
-	uint64_t connection_id = msg_send_data_end->m_session_id;
-	__SocketCtx* ctx = __getClientCtxBySocket(socket);
-	if (ctx == NULL || connection_id != ctx->m_connection_id)
+	__SocketCtx* ctx = __getClientCtxBySelectorSessionId(msg_send_data_end->m_session_id);
+	if (ctx == nullptr)
 		return;
 
 	Msg_TcpClientSocketSendDataEnd* m = new Msg_TcpClientSocketSendDataEnd();
@@ -312,11 +306,11 @@ TcpAsyncClientApi::__SocketCtx* TcpAsyncClientApi::__getClientCtxBySid(socket_id
 	return get_map_element_by_key(m_ctxs, sid);
 }
 
-TcpAsyncClientApi::__SocketCtx* TcpAsyncClientApi::__getClientCtxBySocket(socket_t socket)
+TcpAsyncClientApi::__SocketCtx* TcpAsyncClientApi::__getClientCtxBySelectorSessionId(uint64_t selector_session_id)
 {
 	for (auto it = m_ctxs.begin(); it != m_ctxs.end(); ++it)
 	{
-		if (it->second->m_socket == socket)
+		if (it->second->m_connection_id == selector_session_id)
 			return it->second;
 	}
 	return nullptr;

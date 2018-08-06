@@ -59,7 +59,7 @@ private:
 	void __stopClientSocket(socket_id_t client_sid, uint64_t connection_id);
 	void __stopClientSocket(__SocketCtx* ctx);
 	__SocketCtx* __getClientCtxBySid(socket_id_t sid);
-	__SocketCtx* __getClientCtxBySocket(socket_t socket);
+	__SocketCtx* __getClientCtxBySelectorSessionId(uint64_t selector_session_id);
 	void __postMsgToTarget(Message* msg, __SocketCtx * ctx);
 
 	Mutex m_mutex;
