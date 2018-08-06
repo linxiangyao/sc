@@ -29,57 +29,50 @@ public:
 	class BaseMsg : public Message
 	{
 	public:
-		BaseMsg() { m_session_id = 0; m_cmd_id = 0; }
+		BaseMsg() { m_session_id = 0; m_cmd_id = 0; m_socket = INVALID_SOCKET; }
 		uint64_t m_session_id;
 		uint64_t m_cmd_id;
+		socket_t m_socket;
 	};
 
 	class Msg_socketClosed : public BaseMsg
 	{
 	public:
-		Msg_socketClosed() { m_msg_type = EMsgType_socketClosed; m_socket = INVALID_SOCKET; }
-		socket_t m_socket;
+		Msg_socketClosed() { m_msg_type = EMsgType_socketClosed;  }
 	};
 
 	class Msg_acceptOk : public BaseMsg
 	{
 	public:
-		Msg_acceptOk() { m_msg_type = EMsgType_acceptOk; m_listen_socket = INVALID_SOCKET; m_tran_socket = INVALID_SOCKET; }
-		socket_t m_listen_socket;
+		Msg_acceptOk() { m_msg_type = EMsgType_acceptOk; m_tran_socket = INVALID_SOCKET; }
 		socket_t m_tran_socket;
 	};
 
 	class Msg_sendEnd : public BaseMsg
 	{
 	public:
-		Msg_sendEnd() { m_msg_type = EMsgType_sendEnd; m_tran_socket = INVALID_SOCKET; m_is_ok = false; }
-		Binary m_recv_data;
-		socket_t m_tran_socket;
+		Msg_sendEnd() { m_msg_type = EMsgType_sendEnd; m_is_ok = false; }
 		bool m_is_ok;
 	};
 
 	class Msg_sendToEnd : public BaseMsg
 	{
 	public:
-		Msg_sendToEnd() { m_msg_type = EMsgType_sendToEnd; m_tran_socket = INVALID_SOCKET; m_is_ok = false; }
-		Binary m_recv_data;
-		socket_t m_tran_socket;
+		Msg_sendToEnd() { m_msg_type = EMsgType_sendToEnd; m_is_ok = false; }
 		bool m_is_ok;
 	};
 
 	class Msg_RecvOk : public BaseMsg
 	{
 	public:
-		Msg_RecvOk() { m_msg_type = EMsgType_recvOk; m_tran_socket = INVALID_SOCKET; }
+		Msg_RecvOk() { m_msg_type = EMsgType_recvOk; }
 		Binary m_recv_data;
-		socket_t m_tran_socket;
 	};
 
 	class Msg_RecvFromOk : public BaseMsg
 	{
 	public:
-		Msg_RecvFromOk() { m_msg_type = EMsgType_recvFromOk; m_tran_socket = INVALID_SOCKET; }
-		socket_t m_tran_socket;
+		Msg_RecvFromOk() { m_msg_type = EMsgType_recvFromOk; m_from_port = 0; }
 		Binary m_recv_data;
 		Ip m_from_ip;
 		uint32_t m_from_port;

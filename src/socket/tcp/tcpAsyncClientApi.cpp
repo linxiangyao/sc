@@ -246,7 +246,7 @@ void TcpAsyncClientApi::__onMsg_ClientDisconnected(Message * msg)
 void TcpAsyncClientApi::__onMsg_ClientRecvData(Message * msg)
 {
 	SocketSelector::Msg_RecvOk* msg_recv_data = (SocketSelector::Msg_RecvOk*)msg;
-	socket_t socket = msg_recv_data->m_tran_socket;
+	socket_t socket = msg_recv_data->m_socket;
 	uint64_t connection_id = msg_recv_data->m_session_id;
 	__SocketCtx* ctx = __getClientCtxBySocket(socket);
 	if (ctx == NULL || connection_id != ctx->m_connection_id)
@@ -262,7 +262,7 @@ void TcpAsyncClientApi::__onMsg_ClientRecvData(Message * msg)
 void TcpAsyncClientApi::__onMsg_ClientSendDataEnd(Message * msg)
 {
 	SocketSelector::Msg_sendEnd* msg_send_data_end = (SocketSelector::Msg_sendEnd*)msg;
-	socket_t socket = msg_send_data_end->m_tran_socket;
+	socket_t socket = msg_send_data_end->m_socket;
 	uint64_t connection_id = msg_send_data_end->m_session_id;
 	__SocketCtx* ctx = __getClientCtxBySocket(socket);
 	if (ctx == NULL || connection_id != ctx->m_connection_id)

@@ -202,11 +202,9 @@ void IocpUtil::postExitCmd(HANDLE completionPort)
 
 void IocpUtil::__copyOverlapToMsg(IocpUtil::MyOverlap* overlap, SocketSelector::BaseMsg* msg)
 {
+	msg->m_socket = overlap->m_socket;
 	msg->m_session_id = overlap->m_session_id;
 	msg->m_cmd_id = overlap->m_cmd_id;
-	//msg->m_args.setUint64("tran_socket", overlap->m_socket);
-	//msg->m_args.setUint64("session_id", overlap->m_session_id);
-	//msg->m_args.setUint64("cmd_id", overlap->m_cmd_id);
 }
 
 
@@ -250,7 +248,7 @@ void IocpUtil::IocpSvrListenRun::__onRun()
 		}
 
 		SocketSelector::Msg_acceptOk* msg = new SocketSelector::Msg_acceptOk();
-		msg->m_listen_socket = m_socket;
+		msg->m_socket = m_socket;
 		msg->m_tran_socket = tran_socket;
 		m_notify_param.postMessage(msg);
 		slog_d("iocp_svr_acceptor:: accept one client, tran_socket=%0", tran_socket);
@@ -419,7 +417,6 @@ void IocpUtil::IocpTranRun::__postSocketClosedMsg(MyOverlap * overlap)
 {
 	SocketSelector::Msg_socketClosed * msg = new SocketSelector::Msg_socketClosed();
 	__copyOverlapToMsg(overlap, msg);
-	msg->m_socket = overlap->m_socket;
 	m_notify_param.postMessage(msg);
 }
 
@@ -427,7 +424,6 @@ void IocpUtil::IocpTranRun::__postSendEndMsg(bool is_ok, MyOverlap * overlap)
 {
 	SocketSelector::Msg_sendEnd* msg = new SocketSelector::Msg_sendEnd();
 	__copyOverlapToMsg(overlap, msg);
-	msg->m_tran_socket = overlap->m_socket;
 	msg->m_is_ok = is_ok;
 	m_notify_param.postMessage(msg);
 }
@@ -436,7 +432,6 @@ void IocpUtil::IocpTranRun::__postRecvOkMsg(MyOverlap * overlap, uint32_t number
 {
 	SocketSelector::Msg_RecvOk* msg = new SocketSelector::Msg_RecvOk();
 	__copyOverlapToMsg(overlap, msg);
-	msg->m_tran_socket = overlap->m_socket;
 	msg->m_recv_data.append((const byte_t*)overlap->m_buffer.buf, numberOfBytesTran);
 	m_notify_param.postMessage(msg);
 }
@@ -445,7 +440,6 @@ void IocpUtil::IocpTranRun::__postSendToEndMsg(bool is_ok, MyOverlap * overlap)
 {
 	SocketSelector::Msg_sendToEnd* msg = new SocketSelector::Msg_sendToEnd();
 	__copyOverlapToMsg(overlap, msg);
-	msg->m_tran_socket = overlap->m_socket;
 	msg->m_is_ok = is_ok;
 	m_notify_param.postMessage(msg);
 }
@@ -454,7 +448,6 @@ void IocpUtil::IocpTranRun::__postRecvFromOkMsg(MyOverlap * overlap, uint32_t nu
 {
 	SocketSelector::Msg_RecvFromOk* msg = new SocketSelector::Msg_RecvFromOk();
 	__copyOverlapToMsg(overlap, msg);
-	msg->m_tran_socket = overlap->m_socket;
 	msg->m_recv_data.append((const byte_t*)overlap->m_buffer.buf, numberOfBytesTran);
 	SocketUtil::sockaddrToIpAndPort((const sockaddr*)&overlap->m_addr, overlap->m_addr_len, &msg->m_from_ip, &msg->m_from_port);
 	m_notify_param.postMessage(msg);
