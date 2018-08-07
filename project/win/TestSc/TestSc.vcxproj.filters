@@ -69,5 +69,12 @@
     <ClInclude Include="..\..\..\test\socket\testTcpAsyncClient.h">
       <Filter>socket</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\comm.h" />
+    <ClInclude Include="..\..\..\test\socket\testHttpClient.h">
+      <Filter>socket</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\test\testSc.cpp" />
   </ItemGroup>
 </Project>

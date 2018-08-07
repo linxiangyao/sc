@@ -17,6 +17,7 @@
 #include "socket/testTcpSyncSvr.h"
 #include "socket/testUdpSyncClient.h"
 #include "socket/testUdpAsyncClient.h"
+#include "socket/testHttpClient.h"
 using namespace std;
 USING_NAMESPACE_S
 
@@ -34,13 +35,13 @@ int main(int argc, char** argv)
 	//__testTcpAsyncClient();
 	//__testTcpRawClient();
 	//__testTcpSyncClient();
-	__testTcpAsyncClient();
+	//__testTcpAsyncClient();
 	//__testIocpClient();
 
 	//__testUdpSyncClient();
 	//__testUdpAsyncClient();
 
-
+	__testHttpClient();
 
 	printf("test end **************************************************************\n");
 	return 0;

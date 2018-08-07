@@ -36,6 +36,19 @@ std::string StringUtil::trimBegin(const std::string& str)
     return str.substr(pos);
 }
 
+std::string StringUtil::trimBegin(const std::string& str, const std::string& skip_str)
+{
+	if (str.size() < skip_str.size())
+		return str;
+	for (size_t i = 0; i < skip_str.size(); ++i)
+	{
+		if (skip_str[i] != str[i])
+			return str;
+	}
+
+	return str.substr(skip_str.size());
+}
+
 std::string StringUtil::trimEnd(const std::string& str)
 {
     if(str.size() == 0)
@@ -125,11 +138,15 @@ void StringUtil::split(const std::string& str, char splitToken, std::vector<std:
 
 std::string StringUtil::fetchMiddle(const std::string& str, const std::string& begin, const std::string& end, bool isTrimEmptyChar)
 {
-	size_t begin_index = str.find(begin);
-	if (begin_index == std::string::npos)
-		return "";
+	size_t begin_index = 0;
+	if (begin.size() > 0)
+	{
+		begin_index = str.find(begin);
+		if (begin_index == std::string::npos)
+			return "";
+		begin_index += begin.size();
+	}
 
-	begin_index += begin.size();
 	if (end.size() == 0)
 		return str.substr(begin_index);
 

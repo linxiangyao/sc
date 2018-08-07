@@ -34,6 +34,7 @@
     <ClInclude Include="..\..\..\test\base\testVariant.h" />
     <ClInclude Include="..\..\..\test\comm.h" />
     <ClInclude Include="..\..\..\test\socket\testDnsResolver.h" />
+    <ClInclude Include="..\..\..\test\socket\testHttpClient.h" />
     <ClInclude Include="..\..\..\test\socket\testIocpSvr.h" />
     <ClInclude Include="..\..\..\test\socket\testSocketUtil.h" />
     <ClInclude Include="..\..\..\test\socket\testTcpAsyncClient.h" />

@@ -11,6 +11,7 @@ class StringUtil
 public:
     static bool         isStringEndWith(const std::string& str, const std::string& endToken);
     static std::string  trimBegin(const std::string& str);
+	static std::string  trimBegin(const std::string& stt, const std::string& skipStr);
     static std::string  trimEnd(const std::string& str);
     static std::string  trim(const std::string& str);
     static void         replace(std::string& str, const std::string& fromToken, const std::string& toToken);
