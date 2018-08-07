@@ -131,7 +131,7 @@ bool TcpAsyncClientApi::atcp_startClientSocket(socket_id_t client_sid, uint64_t*
 		return false;
 	ctx->m_conn_state = __EConnectState_connecting;
 
-	slog_d("TcpAsyncClientApi:: atcp_startClientSocket cient_sid=%0, connection_id=%1", client_sid, *connection_id);
+	slog_d("TcpAsyncClientApi:: atcp_startClientSocket cient_sid=%0, connection_id=%1, socket=%2", client_sid, *connection_id, s);
 	return true;
 }
 
@@ -211,6 +211,10 @@ void TcpAsyncClientApi::__onMsg_ConnectorConnectEnd(Message * msg)
 		__postMsgToTarget(m, ctx);
 		slog_v("TcpAsyncClientApi:: on client connected msg ok, client_sid=%0", ctx->m_sid);
 
+		if (!SocketUtil::changeSocketToAsync(ctx->m_socket))
+		{
+			slog_e("TcpAsyncClientApi:: __onMsg_ConnectorConnectEnd fail to changeSocketToAsync, client_sid=%0", ctx->m_sid);
+		}
 		m_selector->addTcpSocket(ctx->m_socket, ETcpSocketType_client, ctx->m_connection_id);
 	}
 	else

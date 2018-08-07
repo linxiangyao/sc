@@ -16,6 +16,7 @@ public:
 		m_notify_looper = notify_looper;
 		m_notify_target = notify_target;
 		m_svr_info = svr_info;
+		m_is_exit = false;
 	}
 
 
@@ -25,14 +26,31 @@ public:
 private:
 	virtual void run() override
 	{
+		{
+			ScopeMutex __l(m_mutex);
+			if (m_is_exit)
+				return;
+		}
+
 		bool is_ok = SocketUtil::connect(m_svr_info.m_socket, m_svr_info.m_ip, m_svr_info.m_port);
 		slog_d("TcpConnector:: connect end, s=%0, is_ok=%1", m_svr_info.m_socket, is_ok);
 		__notify(is_ok);
+
+		{
+			ScopeMutex __l(m_mutex);
+			m_is_exit = true;
+		}
 	}
 
 	virtual void stop() override
 	{
-		SocketUtil::disconnect(m_svr_info.m_socket);
+		ScopeMutex __l(m_mutex);
+		if (m_is_exit)
+			return;
+
+		//m_is_exit = true;
+		//slog_d("disconnect socket=%0", m_svr_info.m_socket);
+		//SocketUtil::disconnect(m_svr_info.m_socket);
 	}
 
 	void __notify(bool is_connected)
@@ -48,6 +66,8 @@ private:
 
 	MessageLooper* m_notify_looper;
 	TcpConnector* m_notify_target;
+	bool m_is_exit;
+	Mutex m_mutex;
 };
 
 

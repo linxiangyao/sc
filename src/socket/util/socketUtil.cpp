@@ -162,6 +162,8 @@ bool SocketUtil::send(socket_t s, const byte_t* data, size_t data_len)
 		if (real_send >= data_len) {
 			return true;
 		}
+		if (real_send == 0)
+			return false;
 
 		data += real_send;
 		data_len -= real_send;
@@ -322,6 +324,7 @@ bool SocketUtil::recvFrom(socket_t s, byte_t* buf, size_t buf_len, Ip* from_ip, 
 
 void SocketUtil::closeSocket(socket_t s)
 {
+	slog_d("SocketUtil::closeSocket s=%0", s);
 #if defined(S_OS_WIN)
 	::closesocket(s);
 #else
@@ -340,8 +343,8 @@ bool SocketUtil::changeSocketToAsync(socket_t s)
 	}
 
 	return true;
-#else
 
+#else
 	int flags = fcntl(s, F_GETFL, 0);
 	if (fcntl(s, F_SETFL, flags | O_NONBLOCK) < 0)
 	{
@@ -349,6 +352,7 @@ bool SocketUtil::changeSocketToAsync(socket_t s)
 		return false;
 	}
 	return true;
+
 #endif
 }
 

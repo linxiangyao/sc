@@ -2,10 +2,9 @@
 #define S_SOCKET_EPOLLUTIL_H_
 #include "socketSelector.h"
 S_NAMESPACE_BEGIN
-#define S_OS_LINUX
+//#define S_OS_LINUX
 #if  defined(S_OS_LINUX) || defined(S_OS_ANDROID)
 #include <sys/epoll.h>
-
 
 
 class EpollUtil
@@ -93,7 +92,7 @@ public:
         bool addTranSocket(socket_t socket, uint64_t session_id, bool is_tcp)
         {
             ScopeMutex __l(m_mutex);
-            if(m_is_exit)
+            if(m_is_exit) 
                 return false;
 			
             if(is_map_contain_key(m_ctxs, session_id))
@@ -106,8 +105,9 @@ public:
 				return false;
 			}
             
-			slog_i("EpollRun:: add tran, is_tcp=%0, ctx->socket_type=%1", is_tcp, ctx->m_socket_type);
+			slog_i("EpollRun:: add tran, is_tcp=%0, ctx->socket_type=%1, socket=%2", is_tcp, ctx->m_socket_type, socket);
             __wakeup();
+			//Thread::sleep(5000);
             return true;
         }
 
@@ -370,7 +370,7 @@ public:
 		{
 			if (ev->events & EPOLLERR || ev->events & EPOLLHUP)
 			{
-				slog_d("EpollRun:: udp closed");
+				slog_d("EpollRun:: udp closed, events=%0", ev->events);
 				__postMsg_SocketClosed_and_releaseCtx(ctx);
 				return;
 			}
@@ -437,6 +437,7 @@ public:
         
         void __releaseAll()
         {
+			slog_d("__releaseAll");
 		    if (m_pipe[0] != -1)
 		    {
                 close(m_pipe[0]);

@@ -28,22 +28,9 @@ int main(int argc, char** argv)
 
 
 
-	//__testBinary();
-	//__testVarint();
-	//__testStringUtil();
-	//__testFileUtil();
-	//__testMsgLoopThread();
-	//__testMsgLoopThreadPerformance();
-	//__testLog();
-	//__testThread();
-	//__testConsole();
-
-	//__testDnsApi();
-	//__testDnsResolver();
-	//__testTcpConnector();
-	//__testTcpSyncClient();
-	__testTcpSyncSvr();
 	//__testIocpSvr();
+	//__testTcpAsyncSvr();
+	__testTcpSyncSvr();
 	//__testUdpSyncSvr();
 	//__testUdpAsyncSvr();
 

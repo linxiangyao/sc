@@ -27,25 +27,16 @@ int main(int argc, char** argv)
 	printf("test start **************************************************************\n");
 
 
-	//__testBinary();
-	//__testVarint();
-	//__testStringUtil();
-	//__testFileUtil();
-	//__testMsgLoopThread();
-	//__testMsgLoopThreadPerformance();
-	//__testLog();
-	//__testThread();
-	//__testConsole();
-
 	//__testDnsApi();
 	//__testDnsResolver();
 	//__testTcpConnector();
+
 	//__testTcpAsyncClient();
 	//__testTcpRawClient();
 	//__testTcpSyncClient();
 	__testTcpAsyncClient();
 	//__testIocpClient();
-	//__testTcpSyncSvr();
+
 	//__testUdpSyncClient();
 	//__testUdpAsyncClient();
 

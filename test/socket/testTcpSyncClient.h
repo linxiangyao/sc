@@ -61,41 +61,41 @@ private:
 		__run_testUpload();
 	}
 
-	void __run_empty()
-	{
-		while (!m_is_exit)
-		{
-			Thread::sleep(100 * 1);
-		}
-	}
+	//void __run_empty()
+	//{
+	//	while (!m_is_exit)
+	//	{
+	//		Thread::sleep(100 * 1);
+	//	}
+	//}
 
-	void __run_testRecv()
-	{
-		byte_t buf[100 * 1024];
-		while (!m_is_exit)
-		{ 
-			//Sleep(100 * 1);
-			memset(buf, 100 * 1024, 0);
-			size_t recv_len = 0;
-			if (!m_sapi->tcp_recv(m_sid, buf, 100 * 1024, &recv_len))
-				return;
-			printf("client:: recv=%s\n", (const char*)buf);
-		}
-	}
+	//void __run_testRecv()
+	//{
+	//	byte_t buf[100 * 1024];
+	//	while (!m_is_exit)
+	//	{ 
+	//		//Sleep(100 * 1);
+	//		memset(buf, 100 * 1024, 0);
+	//		size_t recv_len = 0;
+	//		if (!m_sapi->tcp_recv(m_sid, buf, 100 * 1024, &recv_len))
+	//			return;
+	//		printf("client:: recv=%s\n", (const char*)buf);
+	//	}
+	//}
 
-	void __run_testSend()
-	{
-		while (!m_is_exit)
-		{
-		Thread::sleep(100);
-		Thread::sleep(2 * 1000);		
-		printf("send hello\n");
-		if (!__sendPackToSvr("hello, i am client, how are you?"))
-			return;
-		if (!__sendPackToSvr(m_upload_pack_data.getData(), m_upload_pack_data.getLen()))
-			return;
-		}
-	}
+	//void __run_testSend()
+	//{
+	//	while (!m_is_exit)
+	//	{
+	//	Thread::sleep(100);
+	//	Thread::sleep(2 * 1000);		
+	//	printf("send hello\n");
+	//	if (!__sendPackToSvr("hello, i am client, how are you?"))
+	//		return;
+	//	if (!__sendPackToSvr(m_upload_pack_data.getData(), m_upload_pack_data.getLen()))
+	//		return;
+	//	}
+	//}
 
 	void __run_testUpload()
 	{
@@ -140,10 +140,11 @@ private:
 		const uint64_t block_size = 1 * 1024 * 1024;
 		uint64_t send_block_count = m_upload_pack_count * __TestBlockClientSpeedRun_uploadPackSize / block_size;
 
+		printf(".");
 		while (send_block_count > m_already_print_send_block_count)
 		{
 			++m_already_print_send_block_count;
-			printf(".");
+			printf("*");
 		}
 	}
 
@@ -223,11 +224,7 @@ private:
 
 		__run();
 
-#ifdef WIN32
-		closesocket(m_s);
-#else
-		close(m_s);
-#endif // WIN32
+		SocketUtil::closeSocket(m_s);
 
 		releaseSocketLib();
 		printf("client:: exit\n");

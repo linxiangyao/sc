@@ -26,3 +26,4 @@ clean:
 	rm -f *.log
 	rm -f *.db
 	rm -rf *.dSYM
+	rm -rf test*

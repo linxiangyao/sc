@@ -72,7 +72,7 @@ private:
 		m_already_print_recv_block_count = 0;
 		while (true)
 		{
-			Thread::sleep(1* 1000);
+			//Thread::sleep(1* 1000);
 
 			size_t recv_len = 0;
 			if (!m_sapi->tcp_recv(m_tran_sid, m_buf, __TestSocketBlockSvrSpeedRun_recvBufLen, &recv_len))
@@ -95,7 +95,7 @@ private:
 			}
 		}
 
-		uint64_t total_time_span_ms = TimeUtil::getMsTime() - start_time_ms;
+		uint64_t total_time_span_ms = TimeUtil::getMsTime() - start_time_ms + 1;
 		uint64_t byte_per_second = recv_total_len * 1000 / total_time_span_ms;
 		printf("\nsvr:: recv_total_len=%s, recv_total_ms=%" PRIu64 ", byte_per_second=%s\n"
 			, StringUtil::byteCountToDisplayString(recv_total_len).c_str(), total_time_span_ms, StringUtil::byteCountToDisplayString(byte_per_second).c_str());
