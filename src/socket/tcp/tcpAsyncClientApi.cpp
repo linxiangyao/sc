@@ -253,7 +253,7 @@ void TcpAsyncClientApi::__onMsg_ClientRecvData(Message * msg)
 		return;
 
 	Msg_TcpClientSocketRecvData* m = new Msg_TcpClientSocketRecvData();
-	msg->m_args.getByteArrayAndDetachTo("data", &m->m_recv_data);
+	m->m_recv_data.attach(&msg_recv_data->m_recv_data);
 	m->m_client_sid = ctx->m_sid;
 	__postMsgToTarget(m, ctx);
 	slog_v("TcpAsyncClientApi:: on client recv data msg ok, client_sid=%0, len=%1", ctx->m_sid, m->m_recv_data.getLen());
