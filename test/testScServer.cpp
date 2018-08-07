@@ -29,8 +29,8 @@ int main(int argc, char** argv)
 
 
 	//__testIocpSvr();
-	//__testTcpAsyncSvr();
-	__testTcpSyncSvr();
+	__testTcpAsyncSvr();
+	//__testTcpSyncSvr();
 	//__testUdpSyncSvr();
 	//__testUdpAsyncSvr();
 

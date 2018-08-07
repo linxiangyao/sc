@@ -325,7 +325,7 @@ public:
 				size_t real_recv_len = 0;
 				if (!SocketUtil::recv(ctx->m_socket, m_recv_buf, __EPOLL_UTIL_RECV_BUF, &real_recv_len))
 				{
-					slog_e("EpollRun:: fail to SocketUtil::recv");
+					slog_d("EpollRun:: fail to SocketUtil::recv, maybe peer closed");
 					__postMsg_SocketClosed_and_releaseCtx(ctx);
 					return;
 				}
@@ -343,7 +343,7 @@ public:
 					size_t real_send_len = 0;
 					if (!SocketUtil::send(ctx->m_socket, cmd->m_send_data.getData(), cmd->m_send_data.getLen(), &real_send_len))
 					{
-						slog_e("EpollRun:: fail to SocketUtil::send");
+						slog_d("EpollRun:: fail to SocketUtil::send, maybe peer closed");
 						__postMsg_SocketClosed_and_releaseCtx(ctx);
 						return;
 					}
