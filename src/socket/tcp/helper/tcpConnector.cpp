@@ -34,11 +34,13 @@ private:
 
 		bool is_ok = SocketUtil::connect(m_svr_info.m_socket, m_svr_info.m_ip, m_svr_info.m_port);
 		slog_d("TcpConnector:: connect end, s=%0, is_ok=%1", m_svr_info.m_socket, is_ok);
-		__notify(is_ok);
 
 		{
 			ScopeMutex __l(m_mutex);
+			if (m_is_exit)
+				return;
 			m_is_exit = true;
+			__notify(is_ok);
 		}
 	}
 
@@ -48,9 +50,9 @@ private:
 		if (m_is_exit)
 			return;
 
-		//m_is_exit = true;
-		//slog_d("disconnect socket=%0", m_svr_info.m_socket);
-		//SocketUtil::disconnect(m_svr_info.m_socket);
+		m_is_exit = true;
+		slog_d("disconnect socket=%0", m_svr_info.m_socket);
+		SocketUtil::disconnect(m_svr_info.m_socket);
 	}
 
 	void __notify(bool is_connected)

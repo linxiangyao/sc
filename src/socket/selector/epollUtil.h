@@ -105,7 +105,7 @@ public:
 				return false;
 			}
             
-			slog_i("EpollRun:: add tran, is_tcp=%0, ctx->socket_type=%1, socket=%2", is_tcp, ctx->m_socket_type, socket);
+			slog_d("EpollRun:: add tran, is_tcp=%0, ctx->socket_type=%1, socket=%2", is_tcp, ctx->m_socket_type, socket);
             __wakeup();
 			//Thread::sleep(5000);
             return true;
@@ -131,7 +131,7 @@ public:
 				}
 			}
            
-		   slog_d("EpollRun:: post send");
+		   //slog_v("EpollRun:: post send");
             __wakeup();
             return true;
         }
