@@ -87,13 +87,17 @@ private:
 
 	void __onMsg_recvData(Message* msg)
 	{
-		ITcpAsyncClientApi::Msg_TcpClientSocketRecvData* m = (ITcpAsyncClientApi::Msg_TcpClientSocketRecvData*)msg;
-		if (m->m_recv_data.getLen() > 0)
+		ITcpAsyncClientApi::Msg_TcpClientSocketRecvData* msg_recv_data = (ITcpAsyncClientApi::Msg_TcpClientSocketRecvData*)msg;
+		__HttpCtx* ctx = __getCtxBySid(msg_recv_data->m_client_sid);
+		if (ctx == nullptr)
+			return;
+
+		if (msg_recv_data->m_recv_data.getLen() > 0)
 		{
-			const char* sz = (const char*)m->m_recv_data.getData();
+			const char* sz = (const char*)msg_recv_data->m_recv_data.getData();
 			std::string str;
-			str.append(sz, m->m_recv_data.getLen());
-			FileUtil::writeFile("1.txt", str);
+			str.append(sz, msg_recv_data->m_recv_data.getLen());
+			FileUtil::writeFile(ctx->m_host + ".txt", str);
 		}
 	}
 
